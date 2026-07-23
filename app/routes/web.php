@@ -1,38 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
+use App\Controllers\UserController;
+use App\Middlewares\Csrf;
+use Gaia\Clarity\Services\Request;
 use Gaia\Clarity\Services\Route;
-use Gaia\Clarity\Services\CsrfService;
-use Gaia\Clarity\Services\Response;
-use Gaia\Herodo\Controllers\UserController;
-use Gaia\Herodo\Models\UserModel;
+use Gaia\Clarity\Services\View;
 
-Route::get('/login', [UserController::class, 'login']);
+Route::get('/', fn () => View::render('Home/index'));
 
-Route::post('/login', function () {
-    (new CsrfService())->requireValid();
+Route::get('/users', [UserController::class, 'index']);
+Route::get('/users/create', [UserController::class, 'create']);
+Route::post('/users', [UserController::class, 'store'])->middleware(Csrf::class);
 
-    if ((new UserModel())->signIn()) {
-        Response::redirect('/profile');
-        return;
-    }
-
-    Response::redirect('/login');
-});
-
-Route::get('/signup', [UserController::class, 'create']);
-
-Route::post('/signup', function () {
-    (new CsrfService())->requireValid();
-    UserController::store();
-});
-
-Route::post('/user/{id}', function (string $id) {
-    (new CsrfService())->requireValid();
-    UserController::store($id);
-});
-
-Route::post('/logout', function () {
-    (new CsrfService())->requireValid();
-    UserModel::signout();
-    Response::redirect('/login');
-});
+Route::fallback(fn (Request $request) => View::render('Errors/404', status: 404));

@@ -1,13 +1,29 @@
 <?php
 
 /**
- * LLM (Large Language Model) configuration
- * Provides defaults for missing environment variables
+ * Per-provider LLM credentials (Services\LLM + LLMAdapters\{Anthropic,OpenAI,DeepSeek,
+ * Gemini} — Clarity §11). There is no global LLM config to hand to a facade: each adapter
+ * is constructed directly wherever it's needed, e.g.
+ * `new \Gaia\Clarity\Services\LLMAdapters\Anthropic($LLM['anthropic']['apiKey'], new
+ * \Gaia\Clarity\Services\HttpClient())`. This file only centralises reading the API keys
+ * out of the environment.
  */
-$LLM = [
-    'secret_key' => getenv('LLM_SECRET_KEY') ?: '',
-    'api_url' => getenv('LLM_API_URL') ?: '',
-    'model' => getenv('LLM_MODEL') ?: ''
-];
 
-define('LLM', $LLM);
+declare(strict_types=1);
+
+$env = static function (string $key, mixed $default = null): mixed {
+    $value = $_ENV[$key] ?? $_SERVER[$key] ?? getenv($key);
+
+    if ($value === false || $value === null || $value === '') {
+        return $default;
+    }
+
+    return is_string($value) ? trim($value) : $value;
+};
+
+$LLM = [
+    'anthropic' => ['apiKey' => $env('ANTHROPIC_API_KEY', '')],
+    'openai' => ['apiKey' => $env('OPENAI_API_KEY', '')],
+    'deepseek' => ['apiKey' => $env('DEEPSEEK_API_KEY', '')],
+    'gemini' => ['apiKey' => $env('GEMINI_API_KEY', '')],
+];

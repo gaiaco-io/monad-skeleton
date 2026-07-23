@@ -1,135 +1,45 @@
 <?php
 
 /**
- * Database configuration
- * Provides defaults for missing environment variables and context-aware database selection
+ * Builds the $DATABASE array config/bootstrap.php hands to DB::configure('default', ...).
+ * Supports mysql (production default), pgsql, and sqlite (handy for local development —
+ * no server to install). DB_DRIVER selects the DSN shape; everything else is read from
+ * .env with sensible defaults.
  */
 
-/**
- * Helper to read environment values with fallbacks
- */
+declare(strict_types=1);
+
 $env = static function (string $key, mixed $default = null): mixed {
     $value = $_ENV[$key] ?? $_SERVER[$key] ?? getenv($key);
-    if ($value === false || $value === null) {
+
+    if ($value === false || $value === null || $value === '') {
         return $default;
     }
-    if (is_string($value)) {
-        $value = trim($value);
-    }
-    return $value === '' ? $default : $value;
+
+    return is_string($value) ? trim($value) : $value;
 };
 
-/**
- * Get database configuration based on context.
- * 
- * Supported contexts:
- * - 'app' or null: App-specific database based on request URI (default)
- * - 'kerberos' or 'session': Kerberos database (for sessions, auth)
- * - 'shared': Shared Core database (for CRM data)
- * - 'subscription': Subscription database (for plan entitlements)
- * 
- * @param string|null $context The database context
- * @return array Database configuration array
- */
-function getDBConfig(?string $context = null): array
-{
-    $env = static function (string $key, mixed $default = null): mixed {
-        $value = $_ENV[$key] ?? $_SERVER[$key] ?? getenv($key);
-        if ($value === false || $value === null) {
-            return $default;
-        }
-        if (is_string($value)) {
-            $value = trim($value);
-        }
-        return $value === '' ? $default : $value;
-    };
+$driver = $env('DB_DRIVER', 'mysql');
 
-    $database_name = '';
-    $host_key = 'DB_HOST';
-    $port_key = 'DB_PORT';
-    $username_key = 'DB_USERNAME';
-    $password_key = 'DB_PASSWORD';
-    $charset_key = 'DB_CHARSET';
-    $driver_key = 'DB_DRIVER';
+$dsn = match ($driver) {
+    'sqlite' => 'sqlite:' . rtrim((string) $env('DB_DATABASE', dirname(__DIR__) . '/storage/database.sqlite'), '/'),
+    'pgsql' => sprintf(
+        'pgsql:host=%s;port=%s;dbname=%s',
+        $env('DB_HOST', '127.0.0.1'),
+        $env('DB_PORT', '5432'),
+        $env('DB_DATABASE', '')
+    ),
+    default => sprintf(
+        'mysql:host=%s;port=%s;dbname=%s;charset=%s',
+        $env('DB_HOST', '127.0.0.1'),
+        $env('DB_PORT', '3306'),
+        $env('DB_DATABASE', ''),
+        $env('DB_CHARSET', 'utf8mb4')
+    ),
+};
 
-    // Handle specific contexts
-    if ($context === 'kerberos' || $context === 'session') {
-        $database_name = $env('KERBEROS_DB_NAME', $env('DB_DATABASE', ''));
-        $host_key = 'KERBEROS_DB_HOST';
-        $port_key = 'KERBEROS_DB_PORT';
-        $username_key = 'KERBEROS_DB_USERNAME';
-        $password_key = 'KERBEROS_DB_PASSWORD';
-        $charset_key = 'KERBEROS_DB_CHARSET';
-        $driver_key = 'KERBEROS_DB_DRIVER';
-    } elseif ($context === 'shared') {
-        $database_name = $env('SHARED_DB_NAME', $env('DB_DATABASE', ''));
-        $host_key = 'SHARED_DB_HOST';
-        $port_key = 'SHARED_DB_PORT';
-        $username_key = 'SHARED_DB_USERNAME';
-        $password_key = 'SHARED_DB_PASSWORD';
-        $charset_key = 'SHARED_DB_CHARSET';
-        $driver_key = 'SHARED_DB_DRIVER';
-    } elseif ($context === 'hello') {
-        $database_name = $env('HELLO_DB_NAME', $env('DB_DATABASE', ''));
-        $host_key = 'HELLO_DB_HOST';
-        $port_key = 'HELLO_DB_PORT';
-        $username_key = 'HELLO_DB_USERNAME';
-        $password_key = 'HELLO_DB_PASSWORD';
-        $charset_key = 'HELLO_DB_CHARSET';
-        $driver_key = 'HELLO_DB_DRIVER';
-    } elseif ($context === 'flow') {
-        $database_name = $env('FLOW_DB_NAME', $env('DB_DATABASE', ''));
-        $host_key = 'FLOW_DB_HOST';
-        $port_key = 'FLOW_DB_PORT';
-        $username_key = 'FLOW_DB_USERNAME';
-        $password_key = 'FLOW_DB_PASSWORD';
-        $charset_key = 'FLOW_DB_CHARSET';
-        $driver_key = 'FLOW_DB_DRIVER';
-    } elseif ($context === 'subscription') {
-        $database_name = $env('SUBSCRIPTION_DB_NAME', $env('DB_DATABASE', ''));
-        $host_key = 'SUBSCRIPTION_DB_HOST';
-        $port_key = 'SUBSCRIPTION_DB_PORT';
-        $username_key = 'SUBSCRIPTION_DB_USERNAME';
-        $password_key = 'SUBSCRIPTION_DB_PASSWORD';
-        $charset_key = 'SUBSCRIPTION_DB_CHARSET';
-        $driver_key = 'SUBSCRIPTION_DB_DRIVER';
-    } elseif ($context === 'session') {
-        $database_name = $env('SESSION_DB_NAME', $env('DB_DATABASE', ''));
-        $host_key = 'SESSION_DB_HOST';
-        $port_key = 'SESSION_DB_PORT';
-        $username_key = 'SESSION_DB_USERNAME';
-        $password_key = 'SESSION_DB_PASSWORD';
-        $charset_key = 'SESSION_DB_CHARSET';
-        $driver_key = 'SESSION_DB_DRIVER';
-    } else {
-        // Default: app-specific database based on request URI
-        $request_uri = $_SERVER['REQUEST_URI'] ?? '';
-        $database_name = $env('DB_DATABASE', '');
-
-        // Check for app-specific database names based on request URI
-        if (strpos($request_uri, '/hello') === 0) {
-            $database_name = $env('HELLO_DB_NAME', $database_name);
-        } elseif (strpos($request_uri, '/flow') === 0) {
-            $database_name = $env('FLOW_DB_NAME', $database_name);
-        } elseif (strpos($request_uri, '/subscription') === 0) {
-            $database_name = $env('SUBSCRIPTION_DB_NAME', $database_name);
-        } elseif (strpos($request_uri, '/auth') === 0) {
-            $database_name = $env('KERBEROS_DB_NAME', $database_name);
-        }
-    }
-
-    return [
-        'driver' => $env($driver_key, $env('DB_DRIVER', 'mysql')),
-        'host' => $env($host_key, $env('DB_HOST', '127.0.0.1')),
-        'port' => $env($port_key, $env('DB_PORT', '3306')),
-        'database' => $database_name,
-        'username' => $env($username_key, $env('DB_USERNAME', 'root')),
-        'password' => $env($password_key, $env('DB_PASSWORD', '')),
-        'charset' => $env($charset_key, $env('DB_CHARSET', 'utf8mb4'))
-    ];
-}
-
-// Set default DB constant for backward compatibility (app context)
-$DB = getDBConfig('app');
-
-define('DB', $DB);
+$DATABASE = [
+    'dsn' => $dsn,
+    'username' => $driver === 'sqlite' ? null : $env('DB_USERNAME', 'root'),
+    'password' => $driver === 'sqlite' ? null : $env('DB_PASSWORD'),
+];

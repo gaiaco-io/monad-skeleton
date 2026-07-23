@@ -1,16 +1,14 @@
 <?php
 
-use Gaia\Clarity\Services\View;
-use Gaia\Clarity\Services\Route;
-use Gaia\Clarity\Services\SeoService;
-
-$csrf_token = View::get('csrf_token') ?? '';
-$csrf_field = View::get('csrf_field') ?? '_csrf';
-
 /**
- * Main Entry Point for all Views
- * Loaded when no route matches the app
+ * @var string $content Rendered by View::render() — the child view's output.
+ * @var string $csrf_token Shared once in public/index.php for every request.
  */
+
+use Gaia\Clarity\Middlewares\Csrf;
+use Gaia\Clarity\Middlewares\MetaTag;
+
+$csrf_token ??= '';
 ?>
 
 <!DOCTYPE html>
@@ -20,11 +18,10 @@ $csrf_field = View::get('csrf_field') ?? '_csrf';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="<?= htmlspecialchars($csrf_token, ENT_QUOTES, 'UTF-8'); ?>">
-    <meta name="csrf-field" content="<?= htmlspecialchars($csrf_field, ENT_QUOTES, 'UTF-8'); ?>">
-    <?= SeoService::render(); ?>
+    <meta name="csrf-field" content="<?= htmlspecialchars(Csrf::FIELD_NAME, ENT_QUOTES, 'UTF-8'); ?>">
+    <?= MetaTag::render(); ?>
     <link rel="stylesheet" href="/assets/css/styles.css">
     <script src="/assets/js/jquery.min.js"></script>
-    <script src="/assets/js/app.js"></script>
 </head>
 
 <body class="bg-slate-700 text-white">
@@ -64,15 +61,7 @@ $csrf_field = View::get('csrf_field') ?? '_csrf';
 
             <!-- ========== MAIN CONTENT ========== -->
             <main class="grow max-w-340 mx-auto px-4 w-full">
-                <div class="text-center py-10 px-4 sm:px-6 lg:px-8">
-                    <h1 class="text-4xl my-6 font-bold">Welcome to Monad</h1>
-                    <p class="text-xl font-normal leading-relaxed my-4">Necessitate only the necessary</p>
-                    <p class="text-xl font-thin leading-relaxed my-4">Monad is a modern and lightweight framework for building applications in PHP. Deep scaffolding is shun away in Monad.</p>
-                    <p class="my-2">To get started, replace the <span class="font-mono font-thin">&lt;main&gt;</span> tag in <span class="font-mono font-thin">public/index.php</span> with the following:</p>
-                    <pre class="bg-slate-800 p-4 rounded-lg text-left">
-                        &lt;?php View::render(); ?&gt;
-                    </pre>
-                </div>
+                <?= $content ?? '' ?>
             </main>
             <!-- ========== END MAIN CONTENT ========== -->
 
