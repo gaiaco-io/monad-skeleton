@@ -1,0 +1,30 @@
+# Environment files
+.env
+
+# IDE / Editor files
+.cursorrules
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Dependencies
+node_modules/
+vendor/
+
+# Build artifacts (optional - uncomment if you want to build in CI/CD)
+# public/assets/js/*.js
+# public/assets/styles.css
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Development Resources (remove negation to ignore)
+!resources/**
+
+# Logs and cache (already handled by subdirectory .gitignore files)
+# storage/logs/
+# storage/cache/
+# storage/userfiles/
