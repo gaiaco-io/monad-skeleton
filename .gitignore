@@ -13,6 +13,10 @@
 node_modules/
 vendor/
 
+# Test artifacts
+.phpunit.cache/
+composer.lock
+
 # Build artifacts (optional - uncomment if you want to build in CI/CD)
 # public/assets/js/*.js
 # public/assets/styles.css

@@ -9,6 +9,7 @@
 
 declare(strict_types=1);
 
+use App\Middlewares\Logger;
 use Dotenv\Dotenv;
 use Gaia\Clarity\Services\Console;
 use Gaia\Clarity\Services\DB;
@@ -55,7 +56,7 @@ Session::configure((int) $env('SESSION_TIMEOUT', 1800));
 
 View::configure($PATH['view']);
 
-Mediator::configure(debug: $env('ENV_MODE', 'production') !== 'production');
+Mediator::configure(debug: $env('ENV_MODE', 'production') !== 'production', logger: new Logger());
 Mediator::register();
 
 Console::configure(dirname(__DIR__) . '/app/routes/cli.php');
