@@ -5,8 +5,8 @@ developers and small teams. This is the project you clone/create to build an app
 framework itself lives in [`gaia/monad-clarity`](https://github.com/gaiaco-io/monad-clarity),
 installed as a dependency.
 
-**Status:** pre-release, under active development toward the 26.07 / `1.0.0` build. Not yet
-published to Packagist.
+**Status:** `1.0.0`, tagged and matching `gaia/monad-clarity 1.0.0`. Not yet published to
+Packagist — `composer create-project` below will work once it is.
 
 ## Requirements
 
@@ -15,8 +15,6 @@ published to Packagist.
 - Node.js (for the Tailwind/asset build only — not required at runtime)
 
 ## Installation
-
-Not yet published. Once tagged `1.0.0`:
 
 ```bash
 composer create-project gaia/monad-skeleton NewApp

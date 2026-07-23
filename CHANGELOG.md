@@ -6,6 +6,14 @@ All notable changes to `gaia/monad-skeleton` are documented in this file. Format
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-07-24
+
+Initial 26.07 release, following `gaia/monad-clarity 1.0.0`. `composer.json` now pins
+`gaia/monad-clarity: ^1.0` (was `dev-main`, since Clarity had no tag yet). CI's sibling
+Clarity checkout still resolves this via a CI-only, uncommitted `minimum-stability: dev`
+override until Clarity is on Packagist with a real stable release — see the comment in
+`.github/workflows/ci.yml`.
+
 ### Added
 - GitHub Actions CI: checks out `gaia/monad-clarity` as a sibling directory (matching the
   local path repository, since Clarity isn't on Packagist yet), matrix over PHP 8.2/8.3,
