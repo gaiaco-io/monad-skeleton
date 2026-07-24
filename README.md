@@ -5,8 +5,7 @@ developers and small teams. This is the project you clone/create to build an app
 framework itself lives in [`monad/clarity`](https://github.com/gaiaco-io/monad-clarity),
 installed as a dependency.
 
-**Status:** `1.0.0`, tagged and matching `monad/clarity 1.0.0`. Not yet published to
-Packagist — `composer create-project` below will work once it is.
+**Status:** `1.0.0`, published on Packagist, matching `monad/clarity 1.0.0`.
 
 ## Requirements
 

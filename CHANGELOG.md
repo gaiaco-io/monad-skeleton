@@ -6,6 +6,30 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-07-24
+
+### Fixed
+- `composer.json` still shipped the local-dev-only `"repositories": [{"type": "path",
+  "url": "../Clarity"}]` entry in the tagged v1.0.0 release — harmless for local
+  development (where `../Clarity` exists as a sibling checkout) but fatal for a real
+  `composer create-project monad/skeleton` from Packagist: Composer evaluates every
+  listed repository regardless of whether it's actually needed to satisfy a constraint,
+  and `../Clarity` doesn't exist relative to a freshly created project directory
+  anywhere else. Caught by the first real `composer create-project` from Packagist
+  (`PathRepository.php:163 — The 'url' supplied for the path (../Clarity) repository
+  does not exist`). Removed entirely — now that both packages are on Packagist,
+  `monad/clarity: ^1.0` resolves directly with no repository override needed.
+- CI simplified to match: no longer checks out `gaia/monad-clarity` as a sibling
+  directory or loosens `minimum-stability` for it — both were only ever a bridge for
+  local/CI development before Packagist submission, and are obsolete now that a plain
+  `composer install` resolves the real published package, exactly like any real
+  consumer's install.
+
+Verified against the actual Packagist packages, not local paths: a clean
+`composer install` in a fresh checkout installs `monad/clarity (v1.0.0)` directly from
+Packagist, and `php mitosis setup && php mitosis migrate && php mitosis health` all pass
+against it (29 tests, 53 assertions, still green).
+
 ## [1.0.0] - 2026-07-24
 
 Initial 26.07 release, following `monad/clarity 1.0.0`. `composer.json` pins

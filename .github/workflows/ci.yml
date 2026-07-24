@@ -16,21 +16,7 @@ jobs:
         php: ['8.2', '8.3']
 
     steps:
-      # monad/clarity isn't on Packagist yet, so composer.json's repositories
-      # entry points at a local path ("../Clarity"). Checking both repos out as
-      # siblings under the shared workspace root reproduces that exact layout in CI.
-      # The GitHub repo itself stays gaiaco-io/monad-clarity — Composer package naming
-      # (monad/clarity) is independent of the GitHub repo name.
-      - name: Check out monad/skeleton
-        uses: actions/checkout@v4
-        with:
-          path: skeleton
-
-      - name: Check out monad/clarity
-        uses: actions/checkout@v4
-        with:
-          repository: gaiaco-io/monad-clarity
-          path: Clarity
+      - uses: actions/checkout@v4
 
       - name: Set up PHP ${{ matrix.php }}
         uses: shivammathur/setup-php@v2
@@ -40,31 +26,13 @@ jobs:
           coverage: none
 
       - name: Validate composer.json
-        working-directory: skeleton
         run: composer validate --strict
 
-      # composer.json requires monad/clarity: ^1.0 — the real, permanent constraint
-      # once Clarity is on Packagist with a tagged stable release. Until then, the
-      # sibling path-repo checkout above only ever resolves as dev-main (aliased to
-      # 1.0.x-dev), which fails a ^1.0 constraint at the default "stable"
-      # minimum-stability. This loosens it for THIS CI run only — composer.json itself
-      # is never touched in the repo — and should be removed once Packagist has the
-      # real 1.0.0 release and this sibling-checkout step is retired in favour of
-      # installing the real published package.
-      - name: Allow dev-stability for the local Clarity path repo (temporary, CI-only)
-        working-directory: skeleton
-        run: |
-          composer config minimum-stability dev
-          composer config prefer-stable true
-
       - name: Install dependencies
-        working-directory: skeleton
         run: composer install --prefer-dist --no-progress
 
       - name: Lint
-        working-directory: skeleton
         run: composer run lint
 
       - name: Test
-        working-directory: skeleton
         run: composer run test

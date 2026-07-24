@@ -10,12 +10,6 @@
     }
   ],
   "minimum-stability": "stable",
-  "repositories": [
-    {
-      "type": "path",
-      "url": "../Clarity"
-    }
-  ],
   "require": {
     "php": ">=8.2",
     "monad/clarity": "^1.0",
