@@ -6,12 +6,12 @@ namespace App\Tests\Middlewares;
 
 use App\Middlewares\Authentication;
 use App\Models\UserModel;
-use Gaia\Clarity\Console\Setup;
-use Gaia\Clarity\Services\Cache;
-use Gaia\Clarity\Services\DB;
-use Gaia\Clarity\Services\Event;
-use Gaia\Clarity\Services\Migration;
-use Gaia\Clarity\Services\Schema;
+use Monad\Clarity\Console\Setup;
+use Monad\Clarity\Services\Cache;
+use Monad\Clarity\Services\DB;
+use Monad\Clarity\Services\Event;
+use Monad\Clarity\Services\Migration;
+use Monad\Clarity\Services\Schema;
 use PDO;
 use PHPUnit\Framework\Attributes\After;
 use PHPUnit\Framework\Attributes\Before;

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Tests\Middlewares;
 
 use App\Middlewares\CORS;
-use Gaia\Clarity\Services\Request;
-use Gaia\Clarity\Services\Response;
+use Monad\Clarity\Services\Request;
+use Monad\Clarity\Services\Response;
 use PHPUnit\Framework\Attributes\After;
 use PHPUnit\Framework\TestCase;
 

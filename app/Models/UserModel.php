@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Gaia\Clarity\Services\DB;
-use Gaia\Clarity\Utils\Hash;
+use Monad\Clarity\Services\DB;
+use Monad\Clarity\Utils\Hash;
 
 /**
  * Example model demonstrating DB usage against the app-owned `users` table (see

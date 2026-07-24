@@ -16,15 +16,17 @@ jobs:
         php: ['8.2', '8.3']
 
     steps:
-      # gaia/monad-clarity isn't on Packagist yet, so composer.json's repositories
+      # monad/clarity isn't on Packagist yet, so composer.json's repositories
       # entry points at a local path ("../Clarity"). Checking both repos out as
       # siblings under the shared workspace root reproduces that exact layout in CI.
-      - name: Check out gaia/monad-skeleton
+      # The GitHub repo itself stays gaiaco-io/monad-clarity — Composer package naming
+      # (monad/clarity) is independent of the GitHub repo name.
+      - name: Check out monad/skeleton
         uses: actions/checkout@v4
         with:
           path: skeleton
 
-      - name: Check out gaia/monad-clarity
+      - name: Check out monad/clarity
         uses: actions/checkout@v4
         with:
           repository: gaiaco-io/monad-clarity
@@ -41,7 +43,7 @@ jobs:
         working-directory: skeleton
         run: composer validate --strict
 
-      # composer.json requires gaia/monad-clarity: ^1.0 — the real, permanent constraint
+      # composer.json requires monad/clarity: ^1.0 — the real, permanent constraint
       # once Clarity is on Packagist with a tagged stable release. Until then, the
       # sibling path-repo checkout above only ever resolves as dev-main (aliased to
       # 1.0.x-dev), which fails a ^1.0 constraint at the default "stable"

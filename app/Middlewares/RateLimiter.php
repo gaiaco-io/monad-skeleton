@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Middlewares;
 
-use Gaia\Clarity\Middlewares\RateLimiter as BaseRateLimiter;
-use Gaia\Clarity\Services\Cache;
+use Monad\Clarity\Middlewares\RateLimiter as BaseRateLimiter;
+use Monad\Clarity\Services\Cache;
 
 /**
  * Thin extension of Clarity's RateLimiter engine (CrossRepoContracts.md §5). Backed by

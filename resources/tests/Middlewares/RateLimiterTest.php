@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Middlewares;
 
 use App\Middlewares\RateLimiter;
-use Gaia\Clarity\Services\Cache;
+use Monad\Clarity\Services\Cache;
 use PHPUnit\Framework\Attributes\After;
 use PHPUnit\Framework\TestCase;
 

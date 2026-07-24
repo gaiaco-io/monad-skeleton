@@ -5,8 +5,8 @@
  * @var ?string $error
  */
 
-use Gaia\Clarity\Middlewares\Csrf;
-use Gaia\Clarity\Middlewares\MetaTag;
+use Monad\Clarity\Middlewares\Csrf;
+use Monad\Clarity\Middlewares\MetaTag;
 
 $layout = 'Layouts/main';
 $error ??= null;

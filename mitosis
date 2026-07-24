@@ -3,4 +3,4 @@
 
 require __DIR__ . '/config/bootstrap.php';
 
-exit(Gaia\Clarity\Services\Console::run($argv));
+exit(Monad\Clarity\Services\Console::run($argv));

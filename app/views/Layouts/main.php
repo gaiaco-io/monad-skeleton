@@ -5,8 +5,8 @@
  * @var string $csrf_token Shared once in public/index.php for every request.
  */
 
-use Gaia\Clarity\Middlewares\Csrf;
-use Gaia\Clarity\Middlewares\MetaTag;
+use Monad\Clarity\Middlewares\Csrf;
+use Monad\Clarity\Middlewares\MetaTag;
 
 $csrf_token ??= '';
 ?>

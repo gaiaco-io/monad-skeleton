@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Tests\Routes;
 
 use App\Middlewares\Csrf;
-use Gaia\Clarity\Services\DB;
-use Gaia\Clarity\Services\Migration;
-use Gaia\Clarity\Services\Request;
-use Gaia\Clarity\Services\Response;
-use Gaia\Clarity\Services\Route;
-use Gaia\Clarity\Services\View;
+use Monad\Clarity\Services\DB;
+use Monad\Clarity\Services\Migration;
+use Monad\Clarity\Services\Request;
+use Monad\Clarity\Services\Response;
+use Monad\Clarity\Services\Route;
+use Monad\Clarity\Services\View;
 use PDO;
 use PHPUnit\Framework\Attributes\After;
 use PHPUnit\Framework\Attributes\Before;

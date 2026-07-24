@@ -2,10 +2,10 @@
 
 Application skeleton for the Monad Framework — an MVC-based PHP framework for solo
 developers and small teams. This is the project you clone/create to build an app; the
-framework itself lives in [`gaia/monad-clarity`](https://github.com/gaiaco-io/monad-clarity),
+framework itself lives in [`monad/clarity`](https://github.com/gaiaco-io/monad-clarity),
 installed as a dependency.
 
-**Status:** `1.0.0`, tagged and matching `gaia/monad-clarity 1.0.0`. Not yet published to
+**Status:** `1.0.0`, tagged and matching `monad/clarity 1.0.0`. Not yet published to
 Packagist — `composer create-project` below will work once it is.
 
 ## Requirements
@@ -17,7 +17,7 @@ Packagist — `composer create-project` below will work once it is.
 ## Installation
 
 ```bash
-composer create-project gaia/monad-skeleton NewApp
+composer create-project monad/skeleton NewApp
 cd NewApp
 cp .env_example .env   # fill in APP_SECRET, DB_*, and anything else you need
 php mitosis setup      # creates the sessions/caches tables
@@ -32,9 +32,9 @@ app/
 ├── Controllers/     # App\Controllers\* — PSR-4, capitalised to match the namespace
 ├── Models/          # App\Models\*
 ├── Services/        # App\Services\*
-├── Middlewares/      # App\Middlewares\* — thin extensions of Gaia\Clarity\Middlewares\*
+├── Middlewares/      # App\Middlewares\* — thin extensions of Monad\Clarity\Middlewares\*
 ├── routes/           # web.php, api.php, cli.php — plain require'd registration files
-└── views/            # resolved by Gaia\Clarity\Services\View
+└── views/            # resolved by Monad\Clarity\Services\View
 config/               # bootstrap.php is the single shared boot path for web/CLI/scripts
 database/
 ├── migrations/

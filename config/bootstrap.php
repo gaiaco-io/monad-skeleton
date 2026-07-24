@@ -11,11 +11,11 @@ declare(strict_types=1);
 
 use App\Middlewares\Logger;
 use Dotenv\Dotenv;
-use Gaia\Clarity\Services\Console;
-use Gaia\Clarity\Services\DB;
-use Gaia\Clarity\Services\Mediator;
-use Gaia\Clarity\Services\Session;
-use Gaia\Clarity\Services\View;
+use Monad\Clarity\Services\Console;
+use Monad\Clarity\Services\DB;
+use Monad\Clarity\Services\Mediator;
+use Monad\Clarity\Services\Session;
+use Monad\Clarity\Services\View;
 
 require __DIR__ . '/../vendor/autoload.php';
 

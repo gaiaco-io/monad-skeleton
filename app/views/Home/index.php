@@ -2,7 +2,7 @@
 
 /** @var string $csrf_token */
 
-use Gaia\Clarity\Middlewares\MetaTag;
+use Monad\Clarity\Middlewares\MetaTag;
 
 $layout = 'Layouts/main';
 

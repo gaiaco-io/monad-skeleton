@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 use App\Controllers\UserController;
 use App\Middlewares\Csrf;
-use Gaia\Clarity\Services\Request;
-use Gaia\Clarity\Services\Route;
-use Gaia\Clarity\Services\View;
+use Monad\Clarity\Services\Request;
+use Monad\Clarity\Services\Route;
+use Monad\Clarity\Services\View;
 
 Route::get('/', fn () => View::render('Home/index'));
 

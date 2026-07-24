@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Middlewares;
 
-use Gaia\Clarity\Middlewares\Logger as BaseLogger;
+use Monad\Clarity\Middlewares\Logger as BaseLogger;
 
 /**
  * Thin extension of Clarity's PSR-3 Logger (CrossRepoContracts.md §5) for the app-level
@@ -15,8 +15,8 @@ use Gaia\Clarity\Middlewares\Logger as BaseLogger;
  * that's where Clarity ships it — so this class is constructed directly wherever
  * logging is needed, not registered via Route. The db (storage/logs/error/db.log,
  * §14.2.11.2) and event/timeline (storage/logs/event/timeline.log, §14.2.11.3) channels
- * are separate concerns: construct `new \Gaia\Clarity\Middlewares\Logger('db',
- * PATH['error_log'] . 'db.log')` / `new \Gaia\Clarity\Middlewares\Logger('event',
+ * are separate concerns: construct `new \Monad\Clarity\Middlewares\Logger('db',
+ * PATH['error_log'] . 'db.log')` / `new \Monad\Clarity\Middlewares\Logger('event',
  * PATH['event_log'] . 'timeline.log')` directly wherever that logging happens, rather
  * than overloading this one class with three unrelated channels.
  *

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Middlewares;
 
-use Gaia\Clarity\Middlewares\Authentication as BaseAuthentication;
-use Gaia\Clarity\Services\DB;
+use Monad\Clarity\Middlewares\Authentication as BaseAuthentication;
+use Monad\Clarity\Services\DB;
 
 /**
  * Thin extension of Clarity's Authentication engine (CrossRepoContracts.md §5). Wires

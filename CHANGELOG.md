@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to `gaia/monad-skeleton` are documented in this file. Format follows
+All notable changes to `monad/skeleton` are documented in this file. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); this project adheres to
 [Semantic Versioning](https://semver.org/).
 
@@ -8,14 +8,17 @@ All notable changes to `gaia/monad-skeleton` are documented in this file. Format
 
 ## [1.0.0] - 2026-07-24
 
-Initial 26.07 release, following `gaia/monad-clarity 1.0.0`. `composer.json` now pins
-`gaia/monad-clarity: ^1.0` (was `dev-main`, since Clarity had no tag yet). CI's sibling
-Clarity checkout still resolves this via a CI-only, uncommitted `minimum-stability: dev`
-override until Clarity is on Packagist with a real stable release — see the comment in
-`.github/workflows/ci.yml`.
+Initial 26.07 release, following `monad/clarity 1.0.0`. `composer.json` pins
+`monad/clarity: ^1.0`. CI's sibling Clarity checkout still resolves this via a CI-only,
+uncommitted `minimum-stability: dev` override until Clarity is on Packagist with a real
+stable release — see the comment in `.github/workflows/ci.yml`.
+
+**Package renamed from `gaia/monad-skeleton` to `monad/skeleton`** (and its dependency
+from `gaia/monad-clarity` to `monad/clarity`) before this tag was pushed — the `gaia`
+vendor name was already claimed on Packagist. No functional change.
 
 ### Added
-- GitHub Actions CI: checks out `gaia/monad-clarity` as a sibling directory (matching the
+- GitHub Actions CI: checks out `monad/clarity` as a sibling directory (matching the
   local path repository, since Clarity isn't on Packagist yet), matrix over PHP 8.2/8.3,
   validate/install/lint/test.
 - Automated test coverage: each of the 7 `App\Middlewares\*` stubs tested directly
@@ -35,8 +38,6 @@ override until Clarity is on Packagist with a real stable release — see the co
   example `UserController`/`UserModel`/views rewritten against the current DB/View/
   Request/Response API, with a real `users` table migration backing
   `Authentication`/`RBAC`'s resolver closures.
-- `composer.json` pins `gaia/monad-clarity: dev-main` for now (Clarity has no version tag
-  yet) — becomes `^1.0` once Clarity ships `1.0.0`, per `ReleasePolicy.md`'s tagging order.
 
 ### Fixed
 - A latent PSR-4 case-sensitivity bug: `app/middlewares`, `app/controllers`, `app/models`
@@ -46,3 +47,8 @@ override until Clarity is on Packagist with a real stable release — see the co
 - `Mediator::configure()` was only ever passed `debug:`, never a `Logger` instance —
   error handling worked but nothing was actually being logged.
 - Scrubbed a real-looking `DB_PASSWORD` default from `.env_example`.
+- The `mitosis` CLI stub itself still referenced `Gaia\Clarity\Services\Console` after
+  the rename below — a critical miss, since that class no longer exists, and the
+  mechanical rename script's file-extension globs never matched an extensionless file.
+  Caught by a deliberate extension-agnostic sweep of the whole tree rather than trusting
+  the `.php`/`.md`/`.json`/`.yml` glob alone.

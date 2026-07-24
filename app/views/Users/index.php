@@ -4,7 +4,7 @@
  * @var list<array{id: string, email: string, full_name: ?string, role: string}> $users
  */
 
-use Gaia\Clarity\Middlewares\MetaTag;
+use Monad\Clarity\Middlewares\MetaTag;
 
 $layout = 'Layouts/main';
 

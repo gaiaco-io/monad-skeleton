@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Tests\Models;
 
 use App\Models\UserModel;
-use Gaia\Clarity\Services\DB;
-use Gaia\Clarity\Services\Migration;
+use Monad\Clarity\Services\DB;
+use Monad\Clarity\Services\Migration;
 use PDO;
 use PHPUnit\Framework\Attributes\After;
 use PHPUnit\Framework\Attributes\Before;

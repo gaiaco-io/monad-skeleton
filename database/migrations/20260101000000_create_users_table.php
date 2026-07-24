@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Gaia\Clarity\Services\Schema;
-use Gaia\Clarity\Services\Schema\Blueprint;
+use Monad\Clarity\Services\Schema;
+use Monad\Clarity\Services\Schema\Blueprint;
 
 /**
  * Application-owned users table (not one of Clarity's two setup-owned tables —

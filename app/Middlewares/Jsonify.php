@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Middlewares;
 
-use Gaia\Clarity\Middlewares\Jsonify as BaseJsonify;
+use Monad\Clarity\Middlewares\Jsonify as BaseJsonify;
 
 /**
  * Thin extension of Clarity's Jsonify engine (CrossRepoContracts.md §5), with defaults

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Middlewares;
 
-use Gaia\Clarity\Middlewares\Csrf as BaseCsrf;
+use Monad\Clarity\Middlewares\Csrf as BaseCsrf;
 
 /**
  * Thin extension of Clarity's Csrf engine (CrossRepoContracts.md §5). Registered as a

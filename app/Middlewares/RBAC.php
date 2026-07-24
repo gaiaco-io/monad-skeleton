@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Middlewares;
 
-use Gaia\Clarity\Middlewares\RBAC as BaseRBAC;
-use Gaia\Clarity\Services\DB;
+use Monad\Clarity\Middlewares\RBAC as BaseRBAC;
+use Monad\Clarity\Services\DB;
 
 /**
  * Thin extension of Clarity's RBAC engine (CrossRepoContracts.md §5). A minimal
