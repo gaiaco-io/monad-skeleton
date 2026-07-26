@@ -6,6 +6,13 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
 
 ## [Unreleased]
 
+## [1.0.2] - 2026-07-26
+
+### Removed
+- `public/.htaccess` — Apache-only config, unused with this project's documented Nginx
+  topology. Inherited from the baseline pre-existing working tree; also carried a
+  hardcoded `qsrbrands.com` CSP `img-src` entry left over from a prior project.
+
 ## [1.0.1] - 2026-07-24
 
 ### Fixed
