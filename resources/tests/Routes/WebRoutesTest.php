@@ -92,7 +92,7 @@ final class WebRoutesTest extends TestCase
             'POST',
             '/users',
             ['HTTP_ORIGIN' => 'http://' . self::HOST],
-            ['email' => 'new@example.com', 'password' => 'password', 'full_name' => 'New User', '_csrf' => $csrfToken]
+            ['email' => 'new@example.com', 'password' => 'correct horse battery staple', 'full_name' => 'New User', '_csrf' => $csrfToken]
         );
 
         self::assertSame(302, $response->status());
@@ -106,7 +106,7 @@ final class WebRoutesTest extends TestCase
             'POST',
             '/users',
             ['HTTP_ORIGIN' => 'http://' . self::HOST],
-            ['email' => 'new@example.com', 'password' => 'password']
+            ['email' => 'new@example.com', 'password' => 'correct horse battery staple']
         );
 
         self::assertSame(403, $response->status());
@@ -115,18 +115,34 @@ final class WebRoutesTest extends TestCase
 
     public function testCreatingAUserWithADuplicateEmailReturnsAValidationError(): void
     {
-        \App\Models\UserModel::create('marshal@example.com', 'password');
+        \App\Models\UserModel::create('marshal@example.com', 'correct horse battery staple');
         $csrfToken = (new Csrf())->tokenFor(Request::fromArrays(server: ['HTTP_HOST' => self::HOST]));
 
         $response = $this->dispatch(
             'POST',
             '/users',
             ['HTTP_ORIGIN' => 'http://' . self::HOST],
-            ['email' => 'marshal@example.com', 'password' => 'password', '_csrf' => $csrfToken]
+            ['email' => 'marshal@example.com', 'password' => 'another correct horse staple', '_csrf' => $csrfToken]
         );
 
         self::assertSame(422, $response->status());
         self::assertStringContainsString('already registered', $response->content());
+    }
+
+    public function testCreatingAUserWithAWeakPasswordReturnsAValidationError(): void
+    {
+        $csrfToken = (new Csrf())->tokenFor(Request::fromArrays(server: ['HTTP_HOST' => self::HOST]));
+
+        $response = $this->dispatch(
+            'POST',
+            '/users',
+            ['HTTP_ORIGIN' => 'http://' . self::HOST],
+            ['email' => 'weak@example.com', 'password' => 'short1', '_csrf' => $csrfToken]
+        );
+
+        self::assertSame(422, $response->status());
+        self::assertStringContainsString('at least 10 characters', $response->content());
+        self::assertFalse(\App\Models\UserModel::emailExists('weak@example.com'));
     }
 
     public function testUnknownRouteFallsBackToTheStyled404(): void

@@ -1,4 +1,167 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/forms";
 @plugin "@tailwindcss/typography";
-@import "preline/variants.css";
+
+/* ============================================================================
+ * Design tokens — matches monad.gaiaco.io's own design system (see the `www`
+ * repo's app/client/src/css/styles.css), so a freshly generated app looks like
+ * it belongs to the same project as the framework's own site rather than a
+ * generic Tailwind starter. Single source of truth: no hex/font value is
+ * hard-coded anywhere outside this file.
+ *
+ * Simplified from the marketing site's version in one respect: light by
+ * default, dark via `prefers-color-scheme` only — no manual light/dark/auto
+ * toggle. A toggle needs a cookie-backed preference service and a pre-paint
+ * script to avoid a flash of the wrong theme (see the `www` repo's
+ * App\Services\Theme and Layouts/main.php for that pattern); wiring it up is
+ * real, app-specific work this starting point deliberately leaves out
+ * ("necessitate only the necessary" — CLAUDE.md).
+ * ============================================================================ */
+
+:root {
+  --surface: #FFFFFF;
+  --surface-raised: #FAFAF9;
+  --ink: #0E0E0D;
+  --ink-muted: #5C5C58;
+  --border: #E4E4E1;
+  --border-strong: #0E0E0D;
+  --signal-ok: #1A7F37;
+  --signal-error: #C4302B;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface: #0E0E0D;
+    --surface-raised: #181816;
+    --ink: #F5F5F3;
+    --ink-muted: #9A9A94;
+    --border: #2A2A27;
+    --border-strong: #F5F5F3;
+    /* Same hues as light, lightness raised for AA contrast on a dark surface. */
+    --signal-ok: #3FB950;
+    --signal-error: #F85149;
+  }
+}
+
+@theme {
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-signal-ok: var(--signal-ok);
+  --color-signal-error: var(--signal-error);
+
+  /* An editorial serif for headings, a plain sans for body, a distinct mono for code. */
+  --font-display: "Fraunces", ui-serif, Georgia, "Times New Roman", serif;
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+/* ============================================================================
+ * Fonts — self-hosted (public/assets/fonts, copied from @fontsource by
+ * scripts/copy-assets.js). No third-party font CDN request, so first paint
+ * never blocks on, or is corrected by, a cross-origin font fetch. Latin
+ * subset only, weights actually used below.
+ * ============================================================================ */
+
+@font-face {
+  font-family: "Fraunces";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/assets/fonts/fraunces-latin-400-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Fraunces";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/assets/fonts/fraunces-latin-600-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "IBM Plex Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/assets/fonts/ibm-plex-sans-latin-400-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "IBM Plex Sans";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/assets/fonts/ibm-plex-sans-latin-500-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "IBM Plex Sans";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/assets/fonts/ibm-plex-sans-latin-600-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/assets/fonts/ibm-plex-mono-latin-400-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/assets/fonts/ibm-plex-mono-latin-500-normal.woff2") format("woff2");
+}
+
+/* ============================================================================
+ * Base
+ * ============================================================================ */
+
+@layer base {
+  html {
+    background-color: var(--surface);
+    color: var(--ink);
+    font-family: var(--font-sans);
+  }
+
+  body {
+    background-color: var(--surface);
+    color: var(--ink);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 600;
+  }
+
+  code, pre, kbd, samp {
+    font-family: var(--font-mono);
+  }
+
+  a {
+    color: inherit;
+  }
+
+  /* Visible keyboard focus on every interactive element — a deliberate
+     :focus-visible ring, not reliance on a browser default a reset might
+     have removed. */
+  :focus-visible {
+    outline: 2px solid var(--border-strong);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html, body, a {
+      transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease;
+    }
+  }
+}

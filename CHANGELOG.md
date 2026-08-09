@@ -6,6 +6,86 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-08-09
+
+### Changed
+- Redesigned the default application shell to match `monad.gaiaco.io`'s own design
+  system (ported from the `www` repository's `app/client/src/css/styles.css`) instead of
+  a generic Tailwind starter look. `app/client/src/css/styles.css` now defines the same
+  color tokens (light by default, dark via `prefers-color-scheme` — see Simplified below),
+  the same three self-hosted typefaces (Fraunces for headings, IBM Plex Sans for body, IBM
+  Plex Mono for code — no font CDN request), and a Tailwind `@theme` bridge exposing them
+  as `bg-surface`/`text-ink`/`border-border`/etc. utility classes. `package.json` gained
+  `@fontsource/{fraunces,ibm-plex-mono,ibm-plex-sans}`; `scripts/copy-assets.js` copies
+  the specific woff2 files used into `public/assets/fonts/`, mirroring the `www` repo's
+  already-established pattern for this.
+
+  Simplified from the marketing site's version in one respect: light-by-default with a
+  `prefers-color-scheme` dark override, no manual light/dark/auto toggle. A toggle needs a
+  cookie-backed preference service and a pre-paint script to avoid a flash of the wrong
+  theme (see `www`'s `App\Services\Theme` and `Layouts/main.php` for that pattern); wiring
+  it up is real, app-specific work this starting point deliberately leaves out
+  ("necessitate only the necessary" — `CLAUDE.md`).
+
+  `app/views/Layouts/main.php`'s header was rebuilt around this: a `monad` wordmark
+  (previously `<monad />` in red, unrelated to the real site's branding), links to the
+  `/users` example and to `DOCS_URL` (new `.env` key, defaults to this repo's GitHub page
+  — the marketing site's real domain is not yet live; see Fixed), and a GitHub icon link.
+  Also removed: a `<script src="/assets/js/jquery.min.js">` tag with nothing on the page
+  that used it, and a mobile hamburger toggle wired to Preline JS that was never loaded on
+  the page at all — dead weight and a non-functional control, not scaffolding. The new
+  header has no JavaScript dependency; it's a plain responsive flex layout.
+
+  `app/views/Home/index.php` no longer restates static "necessitate only the necessary"
+  copy as the entire page. It now renders a live status panel — PHP version, environment
+  mode, database connectivity and driver, migration status — sourced from a new
+  `App\Services\AppStatus` (the same checks `Monad\Clarity\Console\Health` runs, reshaped
+  for display) via a new `App\Controllers\HomeController`, replacing the inline closure
+  route. A fresh install now answers "did this actually wire up?" by looking at the page.
+  Below that, a "what to touch next" list points at `app/routes/web.php`, `CLAUDE.md`, and
+  the example Users flow. `app/views/Users/index.php` and `Users/create.php` were restyled
+  to the same tokens — both are one click from the redesigned home page, so leaving them
+  on the old hardcoded slate/blue palette would have looked like two different, unfinished
+  apps stitched together.
+
+### Added
+- `App\Services\PasswordPolicy` — a real, tested password validation service, demonstrating
+  the case a Service class is for: logic with actual branches, not a pass-through
+  `UserModel::create()` didn't need wrapping. Deliberately does not require forced
+  complexity (a digit, a symbol, mixed case) — NIST 800-63B recommends against those rules,
+  since they push users toward predictable substitutions without meaningfully raising
+  guessing resistance. Instead: a minimum length (10), a maximum length (256, so a
+  megabyte-sized "password" is rejected before it reaches Argon2id rather than burning CPU
+  hashing it), a small illustrative common-password blocklist, and a check that the
+  password isn't just the user's own email address. The blocklist is explicitly
+  documented as a starting point, not a real breach corpus — a production app should
+  check against something like the Have I Been Pwned Pwned Passwords range API instead.
+- `App\Services\Registration` and `App\Services\RegistrationException` — orchestrates
+  email format/uniqueness validation, `PasswordPolicy`, `UserModel::create()`, and
+  dispatches `Monad\Clarity\Services\Event::USER_REGISTERED` (a constant that already
+  existed in Clarity, reserved for exactly this) on success. Every violation is collected
+  and thrown together in one `RegistrationException`, not the first one found — a form
+  that reports one problem per resubmit is a worse experience than being told everything
+  at once. `App\Controllers\UserController::store()` now delegates to this instead of
+  inlining the checks; `app/views/Users/create.php` renders the resulting `list<string>`
+  of errors instead of a single `?string`.
+
+### Fixed
+- `app/views/Errors/404.php` never set `$layout`, so `Route::fallback()`'s response — the
+  actual 404 a visitor sees — rendered as a bare HTML fragment with no `<head>`, no
+  stylesheet link, and therefore no styling whatsoever, regardless of what `.php`
+  contained. `WebRoutesTest`'s `testUnknownRouteFallsBackToTheStyled404` only asserted the
+  string `'404'` appeared in the body, which a plain-text fragment satisfies just as well
+  as a styled page — so this was never caught. It now opts into `Layouts/main` like every
+  other view.
+- Investigated pointing "Documentation" at the real `monad.gaiaco.io` production domain
+  (found in the `www` repository's own deployment docs). Not done: that repo's own deploy
+  checklist (`DeployRunbook.md`) shows the site is not live yet, so hardcoding an unverified
+  domain into a public starter kit risked a broken/parked-domain link for every
+  `create-project` user. `DOCS_URL` is a new `.env` key instead, defaulting to this
+  repository's GitHub page, so it can be pointed at the real site with no code change once
+  one exists.
+
 ## [1.0.4] - 2026-08-09
 
 ### Fixed

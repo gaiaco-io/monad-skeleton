@@ -28,6 +28,7 @@ composer.lock
 # than erroring. Build them, don't track them. Sources stay tracked in app/client/src/.
 /public/assets/css/
 /public/assets/js/
+/public/assets/fonts/
 
 # OS files
 .DS_Store

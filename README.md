@@ -5,7 +5,7 @@ developers and small teams. This is the project you clone/create to build an app
 framework itself lives in [`monad/clarity`](https://github.com/gaiaco-io/monad-clarity),
 installed as a dependency.
 
-**Status:** `1.0.4`, published on Packagist. Depends on `monad/clarity ^1.0`, which
+**Status:** `1.1.0`, published on Packagist. Depends on `monad/clarity ^1.0`, which
 currently resolves to `1.0.1`. The two packages have independent version lines.
 
 ## Requirements
@@ -35,8 +35,9 @@ php mitosis serve      # http://127.0.0.1:8000
   scanning your templates, so a stylesheet built against different markup will silently
   omit whatever your views actually use — the page renders unstyled rather than erroring.
 - **`build:assets`** copies jQuery, Preline, DataTables and Chart.js out of `node_modules`
-  into `public/assets/js/`. The default layout loads `/assets/js/jquery.min.js`, which
-  404s until this has run.
+  into `public/assets/js/` — available if you want them, but the default layout doesn't
+  load any of them — plus the self-hosted Fraunces/IBM Plex Sans/IBM Plex Mono font files
+  the built stylesheet references into `public/assets/fonts/`.
 
 Re-run `npm run build:css` (or `npm run watch:css` while developing) whenever you add
 Tailwind classes the previous build never saw.

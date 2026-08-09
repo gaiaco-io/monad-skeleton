@@ -28,12 +28,24 @@ const ASSETS_TO_COPY = {
       to: "dataTables.dataTables.min.css",
     },
   ],
+  // Self-hosted per app/client/src/css/styles.css's own comment — no third-party font
+  // CDN request, so first paint never blocks on a cross-origin font fetch.
+  fonts: [
+    { from: "@fontsource/fraunces/files/fraunces-latin-400-normal.woff2", to: "fraunces-latin-400-normal.woff2" },
+    { from: "@fontsource/fraunces/files/fraunces-latin-600-normal.woff2", to: "fraunces-latin-600-normal.woff2" },
+    { from: "@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-400-normal.woff2", to: "ibm-plex-sans-latin-400-normal.woff2" },
+    { from: "@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-500-normal.woff2", to: "ibm-plex-sans-latin-500-normal.woff2" },
+    { from: "@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-600-normal.woff2", to: "ibm-plex-sans-latin-600-normal.woff2" },
+    { from: "@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-400-normal.woff2", to: "ibm-plex-mono-latin-400-normal.woff2" },
+    { from: "@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-500-normal.woff2", to: "ibm-plex-mono-latin-500-normal.woff2" },
+  ],
 };
 
 // Apps to copy JS files from
 const NODE_MODULES = path.join(__dirname, "..", "node_modules");
 const PUBLIC_JS = path.join(__dirname, "..", "public", "assets", "js");
 const PUBLIC_CSS = path.join(__dirname, "..", "public", "assets", "css");
+const PUBLIC_FONTS = path.join(__dirname, "..", "public", "assets", "fonts");
 
 function copyFile(src, dest) {
   const srcPath = path.join(NODE_MODULES, src);
@@ -110,6 +122,7 @@ function copyAssets() {
 
   let jsCount = 0;
   let cssCount = 0;
+  let fontCount = 0;
 
   // Copy JavaScript files
   ASSETS_TO_COPY.js.forEach(({ from, to }) => {
@@ -125,8 +138,15 @@ function copyAssets() {
     }
   });
 
+  // Copy font files
+  ASSETS_TO_COPY.fonts.forEach(({ from, to }) => {
+    if (copyFile(from, PUBLIC_FONTS)) {
+      fontCount++;
+    }
+  });
+
   console.log(
-    `\n✅ Node modules: ${jsCount} JS file(s), ${cssCount} CSS file(s) copied`
+    `\n✅ Node modules: ${jsCount} JS file(s), ${cssCount} CSS file(s), ${fontCount} font file(s) copied`
   );
 
   // Copy app-specific JS files
@@ -136,7 +156,7 @@ function copyAssets() {
     console.log(`\n✅ App JS files: ${appJsCount} file(s) copied`);
   }
 
-  const totalCount = jsCount + cssCount + appJsCount;
+  const totalCount = jsCount + cssCount + fontCount + appJsCount;
 
   if (totalCount === 0) {
     console.warn(
