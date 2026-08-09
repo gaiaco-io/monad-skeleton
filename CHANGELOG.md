@@ -12,7 +12,11 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
   (lowercase) to the actual, PSR-4-correct `app/Middlewares/` — the rest of that document,
   `RepoMap.md`'s own tree, and this repository itself already agreed on the capitalised
   form. `RepoMap.md`'s tree gained `public/assets/fonts/`, added by `1.1.0`'s landing-page
-  redesign but not previously documented. Both files are byte-identical to Clarity's again.
+  redesign but not previously documented, and corrected `app/api` to `Api` — capitalised
+  and commented (`namespace App\Api;` — PSR-4) to match its `Controllers`/`Models`/
+  `Middlewares`/`Services` siblings. Renamed the stray, empty, git-untracked local
+  `app/api` directory to `app/Api` to match; no `App\Api` classes exist yet. Both files
+  are byte-identical to Clarity's again.
 
 ## [1.1.0] - 2026-08-09
 
