@@ -6,6 +6,14 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
 
 ## [Unreleased]
 
+### Documentation
+- Re-synced `resources/docs/CrossRepoContracts.md` and `RepoMap.md` from Clarity's
+  canonical copies. `CrossRepoContracts.md` §4 corrected a stale `app/middlewares/`
+  (lowercase) to the actual, PSR-4-correct `app/Middlewares/` — the rest of that document,
+  `RepoMap.md`'s own tree, and this repository itself already agreed on the capitalised
+  form. `RepoMap.md`'s tree gained `public/assets/fonts/`, added by `1.1.0`'s landing-page
+  redesign but not previously documented. Both files are byte-identical to Clarity's again.
+
 ## [1.1.0] - 2026-08-09
 
 ### Changed
