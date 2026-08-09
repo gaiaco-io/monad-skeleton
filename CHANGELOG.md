@@ -6,6 +6,8 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-08-10
+
 ### Documentation
 - Re-synced `resources/docs/CrossRepoContracts.md` and `RepoMap.md` from Clarity's
   canonical copies. `CrossRepoContracts.md` §4 corrected a stale `app/middlewares/`
