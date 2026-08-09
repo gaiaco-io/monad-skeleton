@@ -6,6 +6,8 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
 
 ## [Unreleased]
 
+## [1.0.3] - 2026-08-09
+
 ### Documentation
 - Followed `monad/clarity`'s retirement of the CalVer milestone naming convention in favour
   of semver. Releases were previously identified two ways at once — a semver package
