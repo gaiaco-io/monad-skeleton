@@ -15,8 +15,11 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
   redesign but not previously documented, and corrected `app/api` to `Api` — capitalised
   and commented (`namespace App\Api;` — PSR-4) to match its `Controllers`/`Models`/
   `Middlewares`/`Services` siblings. Renamed the stray, empty, git-untracked local
-  `app/api` directory to `app/Api` to match; no `App\Api` classes exist yet. Both files
-  are byte-identical to Clarity's again.
+  `app/api` directory to `app/Api` to match; no `App\Api` classes exist yet. `RepoMap.md`'s
+  Clarity tree also had `MetaTag.php` listed under `src/Services/`; corrected to
+  `src/Middlewares/` — where it has actually lived since being relocated and renamed from
+  `Services\SeoService`, per Clarity's own `API_Contracts.md` and `CHANGELOG.md`. Both
+  files are byte-identical to Clarity's again.
 
 ## [1.1.0] - 2026-08-09
 
