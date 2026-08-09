@@ -6,6 +6,51 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
 
 ## [Unreleased]
 
+## [1.0.4] - 2026-08-09
+
+### Fixed
+- A new application rendered completely unstyled, and its every page requested a
+  JavaScript file that returned 404. Found by actually opening the home page in a browser
+  rather than asserting on the response body — the page returned `200 OK` with correct,
+  complete markup the whole time, which is why the test suite and every `curl` check
+  passed. Two separate causes, both in how built assets were handled:
+  - `public/assets/css/styles.css` was committed to the repository and had last been
+    written by `fd697cd`, the baseline commit of the pre-existing working tree. The layout
+    that consumes it was rewritten afterwards, in `48934b8`, and the stylesheet was never
+    rebuilt. Tailwind emits only the utility classes it finds while scanning templates, so
+    the committed build contained none of the classes the rewritten views introduced —
+    `bg-slate-700`, `max-w-340`, `hover:text-slate-300` and `bg-white/10` were all absent.
+    The result was a valid, non-empty 45 KB stylesheet that simply did not style the
+    markup it shipped alongside. Rebuilding produces a *smaller* file (32 KB): the old one
+    was carrying utilities for markup that no longer exists while missing the ones in use.
+  - `public/assets/js/` was never committed at all, while
+    `app/views/Layouts/main.php` loads `/assets/js/jquery.min.js` on every page. That file
+    is vendored from `node_modules` by `scripts/copy-assets.js`, so it existed only after
+    an `npm install` that the README never asked anyone to run.
+
+### Changed
+- Built assets are no longer tracked in git. `public/assets/css/` and `public/assets/js/`
+  are now ignored, and `public/assets/css/styles.css` has been removed from the index.
+  Tracking one built file but not the other is what allowed the two failures above to
+  differ in kind while sharing a root cause, and a committed build has no mechanism to
+  notice that the templates it was generated from have changed. Sources remain tracked in
+  `app/client/src/`; the artifacts are reproduced by `npm install`. `public/` now ships
+  only `index.php`, `router.php`, `llms.txt` and `sitemap.xml`.
+- `package-lock.json` is now committed, so the asset build is reproducible rather than
+  resolving fresh dependency versions on every install.
+- `/storage/database.sqlite` is now ignored. `config/database.php` defaults `DB_DATABASE`
+  to that path when `DB_DRIVER=sqlite`, so anyone taking the documented SQLite option was
+  left with an untracked database file in `git status`.
+
+### Documentation
+- `README.md`'s Installation section now includes `npm install`, without which no
+  application renders correctly. Requirements previously described Node.js as being "for
+  the Tailwind/asset build only — not required at runtime", which reads as optional; it is
+  required once at install time, and the entry now says so. Added a short explanation of
+  what `build:css` and `build:assets` each produce and why a stale stylesheet fails
+  silently — the failure mode is an unstyled page, never an error — plus a pointer to
+  `npm run build:css` / `watch:css` when adding classes a previous build never saw.
+
 ## [1.0.3] - 2026-08-09
 
 ### Documentation

@@ -5,25 +5,41 @@ developers and small teams. This is the project you clone/create to build an app
 framework itself lives in [`monad/clarity`](https://github.com/gaiaco-io/monad-clarity),
 installed as a dependency.
 
-**Status:** `1.0.3`, published on Packagist. Depends on `monad/clarity ^1.0`, which
+**Status:** `1.0.4`, published on Packagist. Depends on `monad/clarity ^1.0`, which
 currently resolves to `1.0.1`. The two packages have independent version lines.
 
 ## Requirements
 
 - PHP `>=8.2`
 - A database: MySQL (default), PostgreSQL, or SQLite
-- Node.js (for the Tailwind/asset build only — not required at runtime)
+- Node.js — required once at install time to build the stylesheet and copy the vendored
+  JavaScript into `public/assets/`. Not required at runtime.
 
 ## Installation
 
 ```bash
 composer create-project monad/skeleton NewApp
 cd NewApp
+npm install            # builds public/assets/css + copies vendored JS — see below
 cp .env_example .env   # fill in APP_SECRET, DB_*, and anything else you need
 php mitosis setup      # creates the sessions/caches tables
 php mitosis migrate    # runs database/migrations/*
 php mitosis serve      # http://127.0.0.1:8000
 ```
+
+`npm install` is not optional for a working page. Its `postinstall` hook runs
+`npm run build:all`, which does two things nothing else does:
+
+- **`build:css`** compiles `app/client/src/css/styles.css` to
+  `public/assets/css/styles.css`. Tailwind emits only the utility classes it finds while
+  scanning your templates, so a stylesheet built against different markup will silently
+  omit whatever your views actually use — the page renders unstyled rather than erroring.
+- **`build:assets`** copies jQuery, Preline, DataTables and Chart.js out of `node_modules`
+  into `public/assets/js/`. The default layout loads `/assets/js/jquery.min.js`, which
+  404s until this has run.
+
+Re-run `npm run build:css` (or `npm run watch:css` while developing) whenever you add
+Tailwind classes the previous build never saw.
 
 ## Project layout
 
