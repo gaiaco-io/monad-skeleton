@@ -6,6 +6,29 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
 
 ## [Unreleased]
 
+### Documentation
+- Followed `monad/clarity`'s retirement of the CalVer milestone naming convention in favour
+  of semver. Releases were previously identified two ways at once — a semver package
+  version and a parallel CalVer milestone name (`26.07`) used for release identity and
+  document filenames — and the milestone name is now retired, anchored on the equivalence
+  **`26.07` shipped as `monad/clarity 1.0.0`**. This repository's own version line is
+  independent of Clarity's and is unaffected. The canonical policy lives in Clarity's
+  `resources/docs/ReleasePolicy.md` § Release naming; this repository's `ReleasePolicy.md`
+  is a different document (git, deployment and rollback rules) and carries no versioning
+  content, so it needed no change.
+- Updated the three references to Clarity's two renamed specification documents:
+  `resources/docs/RepoMap.md`'s tree of the Clarity repository now lists
+  `GapAnalysis_BuildPlan_1.0.0.md` and `ReleaseNotes_1.0.0.md`, and
+  `resources/docs/CrossRepoContracts.md` §9 now cites `ReleaseNotes_1.0.0.md`.
+- Re-synced `resources/docs/CrossRepoContracts.md` from Clarity's canonical copy, per that
+  document's §10 and `ReleasePolicy.md` § Repository authority. The mirror had drifted by
+  exactly one line (the specification filename above) and is now byte-identical, satisfying
+  item 7 of Clarity's Packagist publication checklist.
+- Historical prose is deliberately preserved rather than rewritten, matching the approach
+  taken in Clarity: only references that would otherwise dangle were updated. The 1.0.0
+  entry below still reads "Initial 26.07 release" and still describes Clarity's "finalized
+  26.07 API", as written at the time.
+
 ## [1.0.2] - 2026-07-26
 
 ### Removed
