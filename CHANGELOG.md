@@ -20,6 +20,37 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
   `src/Middlewares/` — where it has actually lived since being relocated and renamed from
   `Services\SeoService`, per Clarity's own `API_Contracts.md` and `CHANGELOG.md`. Both
   files are byte-identical to Clarity's again.
+- Audited the rest of `resources/docs/` — `API_Contracts.md`, `Architecture.md`, `DDL.sql`,
+  `DeploymentTopology.md`, `DesignTokens.md`, `PermissionsMatrix.md`, `PRD.md`,
+  `ReleasePolicy.md`, `TestingStrategy.md`, `UIUXRules.md` — the same way as Clarity's, with
+  one adjustment: unlike Clarity's docs, these are largely generic starter templates for
+  whatever application gets built from this skeleton, not records of the skeleton's own
+  build, so most bracketed `[placeholder]` content is correctly unfilled scaffolding, not a
+  bug to fix. Four things were real drift, not placeholders:
+  - `DesignTokens.md` presented itself as the definitive "Source of Truth ... Claude must
+    use these tokens instead of inventing" — but its colour palette (`--color-primary`,
+    `--color-background`, generic slate/blue values), font stack (`[Font stack]`), radius,
+    and spacing tokens matched nothing in the actual shipped
+    `app/client/src/css/styles.css`, which defines a completely different, real token
+    system (`--surface`/`--ink`/`--signal-ok`/etc., Fraunces/IBM Plex Sans/IBM Plex Mono)
+    from the `1.1.0` landing-page redesign — this doc was simply never touched when that
+    redesign shipped. Rewrote the colour and typography sections to the real values, and
+    was honest that no custom radius/spacing/shadow tokens exist at all — those views use
+    Tailwind's defaults directly.
+  - `DDL.sql` describes itself as "Database Source of Truth" and says "Claude must not
+    invent tables or columns not defined in this file" — but didn't document `users`, the
+    one real table this skeleton actually ships
+    (`database/migrations/20260101000000_create_users_table.php`). Added it, sourced
+    directly from the migration's `Blueprint` definition rather than re-typed by hand.
+  - `Architecture.md` §3's directory-structure example didn't match reality in either
+    content or convention — `app/server/controllers/` nesting that has never existed,
+    routes as subdirectories rather than the three real `.php` files, lowercase dirs where
+    the real ones are capitalised for PSR-4. Replaced with the actual current tree
+    (matching `RepoMap.md`, the canonical source for the full version of the same
+    information).
+  - `TestingStrategy.md` referenced `docs/DDL.sql` twice — there is no top-level `docs/`
+    directory in this repository; every other document in this same folder correctly says
+    `resources/docs/DDL.sql`. Fixed both instances.
 
 ## [1.1.0] - 2026-08-09
 

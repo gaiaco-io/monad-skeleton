@@ -21,25 +21,32 @@ Claude must use this document to decide where implementation belongs and must no
 
 ## 3. Directory Structure
 
-Document the actual project structure here. Example:
+The real, current structure (kept in sync with `resources/docs/RepoMap.md`, the canonical
+full tree — this is the abridged, application-focused view of the same thing):
 
 ```text
 app/
-├── server/
-│   ├── controllers/
-│   ├── models/
-│   ├── services/
-│   ├── routes/
-│   │   ├── web/
-│   │   ├── api/
-│   │   └── cli/
-│   └── views/
+├── Api                 <!-- capitalised to match `namespace App\Api;` — PSR-4; empty, no routes registered yet -->
 ├── client/
 │   └── src/
-│       └── css/
+│       ├── css/
+│       └── js/
+├── Controllers          <!-- capitalised — PSR-4 -->
+├── Models                <!-- capitalised — PSR-4 -->
+├── routes/               <!-- lowercase: files `require`d directly, not PSR-4-autoloaded -->
+│   ├── api.php
+│   ├── cli.php
+│   └── web.php
+├── Middlewares            <!-- capitalised — PSR-4; thin extensions of Monad\Clarity\Middlewares\* -->
+├── Services                <!-- capitalised — PSR-4 -->
+└── views/                   <!-- lowercase: resolved by View's own path logic, not PSR-4 -->
 database/
 public/
 ```
+
+Unlike most of this document, this section is not a generic template — it names real,
+current directories. If the structure changes, update this section (and `RepoMap.md`) in
+the same commit, not "eventually."
 
 ## 4. Request Lifecycle
 

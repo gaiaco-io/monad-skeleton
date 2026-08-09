@@ -37,12 +37,12 @@ Replace placeholders with actual project commands.
 
 1. Seed data must be realistic enough to validate business logic.
 2. Seed data must not contain real personal data, credentials, secrets, or production data.
-3. Seed data must align with `docs/DDL.sql`.
+3. Seed data must align with `resources/docs/DDL.sql`.
 4. Test data must include positive and negative cases.
 
 ## 5. Database Test Rules
 
-1. Test tables and columns must match `docs/DDL.sql`.
+1. Test tables and columns must match `resources/docs/DDL.sql`.
 2. Do not create tests relying on undocumented columns.
 3. Migration tests must prove forward migration works.
 4. Rollback tests should be included where practical.
