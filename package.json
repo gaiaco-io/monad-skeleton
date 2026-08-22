@@ -35,8 +35,10 @@
     "@tailwindcss/typography": "^0.5.19",
     "@types/jquery": "^3.5.32",
     "@types/node": "^24.8.1",
-    "esbuild": "^0.27.1",
     "tailwindcss": "^4.1.14",
     "typescript": "^5.9.3"
+  },
+  "allowScripts": {
+    "@parcel/watcher": true
   }
 }
