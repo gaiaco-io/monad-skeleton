@@ -6,6 +6,13 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
 
 ## [Unreleased]
 
+### Removed
+- `typescript`, `@types/jquery`, and `@types/node` `devDependencies` — dead weight.
+  Nothing in the repo has ever had a `.ts`/`.tsx` file or a `tsconfig.json`, so nothing
+  compiled against them or consumed the type declarations. Verified with a clean
+  `rm -rf node_modules package-lock.json && npm install`: `npm ls typescript @types/node
+  @types/jquery` now resolves to nothing, and the Tailwind/asset build is unaffected.
+
 ## [1.1.2] - 2026-08-22
 
 ### Fixed
