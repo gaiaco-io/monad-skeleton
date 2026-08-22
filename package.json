@@ -33,10 +33,7 @@
     "@tailwindcss/cli": "^4.1.14",
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/typography": "^0.5.19",
-    "@types/jquery": "^3.5.32",
-    "@types/node": "^24.8.1",
-    "tailwindcss": "^4.1.14",
-    "typescript": "^5.9.3"
+    "tailwindcss": "^4.1.14"
   },
   "allowScripts": {
     "@parcel/watcher": true
