@@ -6,6 +6,8 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
 
 ## [Unreleased]
 
+## [1.1.3] - 2026-08-22
+
 ### Removed
 - `typescript`, `@types/jquery`, and `@types/node` `devDependencies` — dead weight.
   Nothing in the repo has ever had a `.ts`/`.tsx` file or a `tsconfig.json`, so nothing
