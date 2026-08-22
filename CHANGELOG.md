@@ -6,6 +6,23 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
 
 ## [Unreleased]
 
+## [1.1.2] - 2026-08-22
+
+### Fixed
+- `npm install` printed an `npm warn allow-scripts` notice for `esbuild` and
+  `@parcel/watcher` — a new default in npm 11.17 that blocks unapproved dependency install
+  scripts. `esbuild` was an unused `devDependency`: nothing in the repo imported it, and
+  `npm ls esbuild` showed no other package depending on it either, so it's removed outright
+  rather than approved. `@parcel/watcher` is a genuine transitive dependency of
+  `@tailwindcss/cli`, needed for `npm run watch:css`; its install script is now approved via
+  an `allowScripts` entry in `package.json`, deliberately left unpinned. npm's default
+  (`--allow-scripts-pin`) writes `pkg@version`, which goes stale — bringing the warning back
+  — the moment `@parcel/watcher`'s lockfile-resolved version moves, since it sits under a
+  caret range this project doesn't control. Verified with a clean `rm -rf node_modules
+  package-lock.json && npm install`: zero allow-scripts warnings, `postinstall` still builds
+  `public/assets/css/styles.css` and copies all vendored JS/font assets, and `npm run
+  watch:css` still starts.
+
 ## [1.1.1] - 2026-08-10
 
 ### Documentation
