@@ -84,9 +84,14 @@ php mitosis logs:clear
 php mitosis test                            # delegates to PHPUnit
 php mitosis serve                           # PHP's built-in server, port 8000 by default
 php mitosis setup                           # creates the sessions/caches tables
+php mitosis checkout:install                # creates the checkout tables — only if you take payments
 ```
 
 Custom commands are registered in `app/routes/cli.php`.
+
+`checkout:install` is deliberately separate from `setup`: payments are opt-in, so an
+application that takes none never creates the three checkout tables. Run it only if you
+use `Monad\Clarity\Services\Checkout` (Clarity 1.2.0+).
 
 ## Testing
 

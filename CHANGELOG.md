@@ -6,6 +6,27 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
 
 ## [Unreleased]
 
+## [1.1.4] - 2026-08-28
+
+Documentation only — no application code changed, and the `monad/clarity` constraint stays
+`^1.0`. Clarity 1.2.0 added Checkout, but the skeleton uses none of it, so pinning `^1.2`
+would force an upgrade nothing here needs.
+
+### Changed
+- `README.md` — the `mitosis` command reference now lists `checkout:install`, added in
+  Clarity 1.2.0. Annotated with the version that introduces it, since `^1.0` also resolves
+  to releases that do not have the command, and noted that it is deliberately separate from
+  `setup`: payments are opt-in, so an application that takes none never creates the three
+  checkout tables.
+- `resources/docs/CrossRepoContracts.md` and `resources/docs/RepoMap.md` — synced from the
+  canonical copies in `monad/clarity` at 1.2.0, per `CrossRepoContracts.md` §10 and the
+  equivalent procedure `RepoMap.md` states for itself. Clarity is canonical for both. The
+  substantive changes there: the Checkout deferral is lifted, `checkout:install` joins the
+  stable command names in §3, and §8 records that the setup-owned table set is *unchanged* —
+  the checkout tables are deliberately not part of that compatibility surface. Both files
+  were byte-identical to Clarity's at v1.1.0 beforehand, so nothing skeleton-specific was
+  overwritten.
+
 ## [1.1.3] - 2026-08-22
 
 ### Removed
