@@ -139,6 +139,56 @@ on it or they are running two different schedules.
 Running the crontab line before `schedule:install` is safe: the tick exits 1 every minute
 naming the install command, loudly, rather than silently doing nothing.
 
+## Sending mail
+
+`Monad\Clarity\Services\Mail` (Clarity 1.6.0+) sends through any of seven mailers — Postmark,
+Resend, SendGrid, Mailgun, Mailtrap, Amazon SES, or plain SMTP — behind one contract, so
+changing provider is a change to `.env` and nothing else. There is no `mitosis` command and no
+table: Mail owns no state.
+
+`config/mail.php` builds the mailer and hands it back. Application code requires it and sends:
+
+```php
+use Monad\Clarity\Services\Mail\{Address, Message};
+
+$mail = require __DIR__ . '/../config/mail.php';
+
+$mail->send(new Message(
+    from: new Address($_ENV['MAIL_FROM_ADDRESS'], $_ENV['MAIL_FROM_NAME']),
+    to: [new Address($user->email)],
+    subject: 'Reset your password',
+    text: "Reset your password: {$url}",
+    html: View::render('Emails/PasswordReset', ['url' => $url]),
+));
+```
+
+**`MAIL_MAILERS` is the whole of the multi-mailer decision.** One name gives you that mailer;
+a comma-separated list gives you a pool that tries them left to right, so a provider outage
+does not take password resets down with it:
+
+```dotenv
+MAIL_MAILERS=postmark              # one mailer
+MAIL_MAILERS=postmark,resend,smtp  # try each in turn
+```
+
+Both return a `Services\Mail`, so nothing downstream changes when you switch between them.
+There is no separate "enable failover" flag — the list is it.
+
+Three things worth knowing before you rely on a pool:
+
+- **Failover keys on whose fault a failure is, not on the status code.** A rejected credential
+  fails over, because the next mailer holds a different one; a malformed recipient does not,
+  because every provider would refuse it the same way.
+- **A pool can send twice.** If a provider accepts a message and then times out before
+  acknowledging, the pool cannot tell that from never having sent it. Put invoices and
+  one-time codes through a single mailer.
+- **Send one message through each member on its own first.** A standby whose credentials and
+  egress have never been exercised is a standby you have no evidence about — and SMTP wants
+  outbound 587 or 465, the one Clarity component needing a port other than 443.
+
+Check `$sent->failedOver()` and log `$sent->attempts` if you pool: Clarity keeps no delivery
+table, so that return value is the only record a mailer is failing.
+
 ## Testing
 
 ```bash

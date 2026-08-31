@@ -6,6 +6,36 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
 
 ## [Unreleased]
 
+### Changed
+- **`config/mail.php` now builds a real mailer.** It previously defined a `MAILER` constant
+  (`provider`/`api_key`/`sender_*`) that nothing read — Clarity had no Mail service when it was
+  written, and `ReleaseNotes_1.6.0.md` §2.1 called the file exactly that, "a dangling
+  `config/mail.php`". Clarity 1.6.0 shipped `Services\Mail`, so the file now returns one:
+  a single adapter, or a `MailerPool` of several tried in priority order.
+
+  **`MAIL_MAILERS` is the whole of the multi-mailer decision.** One name returns that adapter;
+  a comma-separated list returns a pool in that order. There is no separate "enable failover"
+  flag, because the object the file returns already says (Clarity §2.6) — and both shapes have
+  the type `Services\Mail`, so application code is identical either way.
+
+  This departs from `config/llm.php`, which centralises credentials and leaves construction to
+  the call site, and the departure is the point rather than an oversight: llm.php's own
+  docblock explains its shape by noting there is no single application-wide LLM instance to
+  hand to a facade. A failover pool is precisely such an instance, and a composition has to be
+  composed somewhere.
+
+  Amazon SES is deliberately not built here — `MailAdapters\AmazonSes` takes an
+  `Aws\SesV2Client`-shaped object rather than a credential, so it belongs wherever the AWS
+  client is.
+
+  Nothing referenced the old `MAILER` constant anywhere in this repository, so no application
+  code changes behaviour. Projects already created from an earlier skeleton are unaffected;
+  this changes what a *new* one is scaffolded with.
+
+- **`.env_example`'s mailer block** replaces the four `MAILER_*` keys with `MAIL_MAILERS`,
+  per-provider credentials, and the SMTP settings. Its comment previously read "Clarity ships
+  no Mail service", which stopped being true at 1.6.0.
+
 ## [1.1.5] - 2026-08-31
 
 Documentation and scaffolding for Clarity 1.5.0's Scheduler. No application code runs
