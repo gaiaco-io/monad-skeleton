@@ -6,6 +6,8 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
 
 ## [Unreleased]
 
+## [1.1.5] - 2026-08-31
+
 Documentation and scaffolding for Clarity 1.5.0's Scheduler. No application code runs
 differently, and the `monad/clarity` constraint stays `^1.0` — it resolves to
 1.5.0, now that Clarity has tagged it, and `CrossRepoContracts.md` §1 states `^1.0` as the

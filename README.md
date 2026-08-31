@@ -5,7 +5,7 @@ developers and small teams. This is the project you clone/create to build an app
 framework itself lives in [`monad/clarity`](https://github.com/gaiaco-io/monad-clarity),
 installed as a dependency.
 
-**Status:** `1.1.4`, published on Packagist. Depends on `monad/clarity ^1.0`, which
+**Status:** `1.1.5`, published on Packagist. Depends on `monad/clarity ^1.0`, which
 currently resolves to `1.5.0`. The two packages have independent version lines; each
 repository's `CHANGELOG.md` is the authoritative record of its own.
 
