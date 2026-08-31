@@ -6,7 +6,7 @@ framework itself lives in [`monad/clarity`](https://github.com/gaiaco-io/monad-c
 installed as a dependency.
 
 **Status:** `1.1.5`, published on Packagist. Depends on `monad/clarity ^1.0`, which
-currently resolves to `1.5.0`. The two packages have independent version lines; each
+currently resolves to `1.6.0`. The two packages have independent version lines; each
 repository's `CHANGELOG.md` is the authoritative record of its own.
 
 ## Requirements
