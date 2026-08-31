@@ -6,6 +6,62 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
 
 ## [Unreleased]
 
+Documentation and scaffolding for Clarity 1.5.0's Scheduler. No application code runs
+differently, and the `monad/clarity` constraint stays `^1.0` — it resolves to 1.4.0
+today and to 1.5.0 the moment that is tagged, and `CrossRepoContracts.md` §1 states `^1.0`
+as the contract, so narrowing it here would itself be a divergence from the canonical copy.
+
+### Added
+- `app/routes/cli.php` — previously an empty file, now carries a commented-out scaffold of
+  the two things that belong in it: `Console::register()` for custom commands, and
+  `Scheduler::job()` for scheduled work. Nothing is uncommented, deliberately: the console
+  kernel loads this file before *every* `mitosis` dispatch and `Scheduler::job()` throws at
+  registration, so a live example with any defect would break every command rather than
+  just `schedule:run`. Without this a scaffolded application never mentions the Scheduler
+  and nobody discovers it. `app/routes/api.php` is left empty as it was.
+- `README.md` — a "Scheduled jobs" section: the single crontab line
+  (`* * * * * cd /path/to/app && php mitosis schedule:run`), the install → register →
+  crontab adoption order, and the fact that the line is safe on every node of a cluster
+  because each due job is claimed cluster-wide before it runs. Documented without
+  `> /dev/null 2>&1`: an uneventful tick prints nothing and exits 0, so silence is the
+  healthy signal and the redirect would discard the failures along with the quiet. Also
+  records that expressions are read on `.env`'s `TIMEZONE` — what `config/bootstrap.php`
+  passes to `date_default_timezone_set()` — which is not necessarily the timezone the
+  system cron itself runs in.
+- `README.md` — `schedule:install` and `schedule:run` join the `mitosis` command reference,
+  annotated with the version that introduces them, since `^1.0` also resolves to releases
+  that do not have them. `schedule:list` joins them now that
+  `src/Console/ScheduleList.php` exists in Clarity's tree — it was held back while it did
+  not, because the `mitosis` reference is operating instructions and a developer copying a
+  line from it must get a command that runs. It also earns a step in the adoption order:
+  read-only and always exit 0, it is the safe way to confirm what the cluster thinks it is
+  scheduled to do.
+
+### Changed
+- `resources/docs/CrossRepoContracts.md` and `resources/docs/RepoMap.md` — synced from the
+  canonical copies in `monad/clarity` at 1.5.0, per `CrossRepoContracts.md` §10 and
+  `ReleasePolicy.md` checklist item 8. Both were byte-identical to Clarity's beforehand, so
+  nothing skeleton-specific was overwritten; the `CANONICAL COPY` header each carries is
+  Clarity's own text, not mirror-specific framing. The substantive changes: §3's stable
+  command list grows to nineteen with `schedule:install`, `schedule:list` and
+  `schedule:run`, and gains a bullet recording that `schedule:run`'s name is load-bearing
+  in a way the others' are not — it is written into a server's crontab and outlives any
+  deploy, so renaming it would break applications silently rather than at the next
+  `mitosis` invocation. `RepoMap.md` gains `Services/Scheduler.php`, the five-file
+  `Services/Scheduler/` subtree, the three `Console/Schedule*.php` commands, and
+  `ReleaseNotes_1.5.0.md`.
+
+### Fixed
+- `README.md`'s **Status** line said `1.1.1` and claimed `monad/clarity ^1.0` resolves to
+  `1.0.1` — the skeleton three releases behind its own CHANGELOG, and Clarity four behind
+  its latest tag. Now `1.1.4` and `1.4.0`, with each repository's `CHANGELOG.md` named as
+  the authoritative record so a reader has a correct answer even when the line next lags.
+  Clarity's `ReleasePolicy.md` publication checklist gains an item covering both READMEs;
+  the line went stale because nothing on that checklist asked for it.
+- `README.md` said Checkout creates "three checkout tables". It has created four since
+  Clarity 1.4.0 added `checkout_subscriptions`; `CrossRepoContracts.md` §8 has named four
+  since the 1.4.0 mirror sync.
+
 ## [1.1.4] - 2026-08-28
 
 Documentation only — no application code changed, and the `monad/clarity` constraint stays

@@ -5,8 +5,9 @@ developers and small teams. This is the project you clone/create to build an app
 framework itself lives in [`monad/clarity`](https://github.com/gaiaco-io/monad-clarity),
 installed as a dependency.
 
-**Status:** `1.1.1`, published on Packagist. Depends on `monad/clarity ^1.0`, which
-currently resolves to `1.0.1`. The two packages have independent version lines.
+**Status:** `1.1.4`, published on Packagist. Depends on `monad/clarity ^1.0`, which
+currently resolves to `1.4.0`. The two packages have independent version lines; each
+repository's `CHANGELOG.md` is the authoritative record of its own.
 
 ## Requirements
 
@@ -85,13 +86,58 @@ php mitosis test                            # delegates to PHPUnit
 php mitosis serve                           # PHP's built-in server, port 8000 by default
 php mitosis setup                           # creates the sessions/caches tables
 php mitosis checkout:install                # creates the checkout tables — only if you take payments
+php mitosis schedule:install                # creates the scheduled_runs table — Clarity 1.5.0+
+php mitosis schedule:list                   # the registered schedule, and how each job last ran
+php mitosis schedule:run                    # runs the jobs due this minute — the cron heartbeat
 ```
 
 Custom commands are registered in `app/routes/cli.php`.
 
 `checkout:install` is deliberately separate from `setup`: payments are opt-in, so an
-application that takes none never creates the three checkout tables. Run it only if you
-use `Monad\Clarity\Services\Checkout` (Clarity 1.2.0+).
+application that takes none never creates the four checkout tables. Run it only if you
+use `Monad\Clarity\Services\Checkout` (Clarity 1.2.0+). `schedule:install` is separate for
+the same reason — see below.
+
+## Scheduled jobs
+
+`Monad\Clarity\Services\Scheduler` (Clarity 1.5.0+) keeps the application's schedule in
+code rather than in a crontab, so jobs travel with a deploy and are visible to code review.
+The system cron gets exactly one line, for the life of the application:
+
+```cron
+* * * * * cd /path/to/app && php mitosis schedule:run
+```
+
+Add it on **every** node that should be eligible to run jobs — three nodes give three
+chances a due job runs, and no chance it runs three times: each due job is claimed
+cluster-wide before it runs.
+
+Note the deliberate absence of `> /dev/null 2>&1`. A tick where nothing was due, or where
+another node already claimed everything, prints nothing and exits 0 — so silence is the
+healthy signal, and the one line you do get is the alert. The reflexive redirect throws
+the failures away along with the quiet.
+
+To adopt it:
+
+1. `php mitosis schedule:install` — once, per database context.
+2. Register jobs in `app/routes/cli.php` with `Scheduler::job()`.
+3. `php mitosis schedule:list` — confirms what is registered and, once the jobs start
+   running, how each one last went. It is read-only and always exits 0, so it is the safe
+   thing to run when you want to know what the cluster thinks it is doing.
+4. Add the crontab line above, on every node that should run jobs.
+
+`app/routes/cli.php` ships with a commented-out example. Jobs are registered with
+`Scheduler::job($name, $cronExpression, $work, staleAfterMinutes: 60)`; the console kernel
+loads that file before every dispatch, so a malformed expression breaks the next `mitosis`
+invocation in plain sight rather than producing a job that quietly never fires.
+
+Cron expressions are evaluated on the application's own clock — the `TIMEZONE` value in
+`.env`, which `config/bootstrap.php` hands to `date_default_timezone_set()`. That is not
+necessarily the timezone the system cron runs in, and every node in a cluster must agree
+on it or they are running two different schedules.
+
+Running the crontab line before `schedule:install` is safe: the tick exits 1 every minute
+naming the install command, loudly, rather than silently doing nothing.
 
 ## Testing
 
