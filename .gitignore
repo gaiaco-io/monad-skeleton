@@ -3,6 +3,7 @@
 
 # IDE / Editor files
 .cursorrules
+.claude/
 .vscode/
 .idea/
 *.swp
