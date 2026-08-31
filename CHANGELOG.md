@@ -7,9 +7,9 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
 ## [Unreleased]
 
 Documentation and scaffolding for Clarity 1.5.0's Scheduler. No application code runs
-differently, and the `monad/clarity` constraint stays `^1.0` — it resolves to 1.4.0
-today and to 1.5.0 the moment that is tagged, and `CrossRepoContracts.md` §1 states `^1.0`
-as the contract, so narrowing it here would itself be a divergence from the canonical copy.
+differently, and the `monad/clarity` constraint stays `^1.0` — it resolves to
+1.5.0, now that Clarity has tagged it, and `CrossRepoContracts.md` §1 states `^1.0` as the
+contract, so narrowing it here would itself be a divergence from the canonical copy.
 
 ### Added
 - `app/routes/cli.php` — previously an empty file, now carries a commented-out scaffold of
@@ -54,7 +54,7 @@ as the contract, so narrowing it here would itself be a divergence from the cano
 ### Fixed
 - `README.md`'s **Status** line said `1.1.1` and claimed `monad/clarity ^1.0` resolves to
   `1.0.1` — the skeleton three releases behind its own CHANGELOG, and Clarity four behind
-  its latest tag. Now `1.1.4` and `1.4.0`, with each repository's `CHANGELOG.md` named as
+  its latest tag. Now `1.1.4` and `1.5.0`, with each repository's `CHANGELOG.md` named as
   the authoritative record so a reader has a correct answer even when the line next lags.
   Clarity's `ReleasePolicy.md` publication checklist gains an item covering both READMEs;
   the line went stale because nothing on that checklist asked for it.
