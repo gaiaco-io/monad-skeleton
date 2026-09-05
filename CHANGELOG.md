@@ -6,6 +6,16 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-09-05
+
+Checkout, wired. Clarity has shipped `Services\Checkout` since its own 1.2.0, but nothing in
+this repository used it, so a project scaffolded from the skeleton had to write the gateway
+callback endpoint itself before it could take a payment. It now ships one. `create-project`
+also writes `.env` for the first time, rather than leaving it to a step in the README.
+
+Additive throughout — new files, a new config, a new route, a new Composer script. Nothing
+existing is narrowed or removed, and the `monad/clarity` constraint stays `^1.0`.
+
 ### Added
 - **Checkout is wired.** `config/checkout.php` reads the credentials for the one gateway named
   in `CHECKOUT_GATEWAY` and builds its adapter, and `POST /webhooks/checkout`
