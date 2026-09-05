@@ -6,6 +6,51 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
 
 ## [Unreleased]
 
+### Added
+- **Checkout is wired.** `config/checkout.php` reads the credentials for the one gateway named
+  in `CHECKOUT_GATEWAY` and builds its adapter, and `POST /webhooks/checkout`
+  (`app/routes/api.php` → `App\Controllers\CheckoutCallbackController`) verifies the gateway's
+  callbacks and applies them to `TransactionLedger`. Clarity has shipped `Services\Checkout`
+  since 1.2.0; nothing in this repository used it, so a project scaffolded from the skeleton had
+  to write the callback endpoint itself before it could take a payment.
+
+  **The callback endpoint is the half that ships.** It is identical in every application, and
+  without it a paid transaction sits at `Pending` in the ledger for ever — the redirect back from
+  a checkout page reports where the customer went, not what the bank did. It answers 204 when the
+  event applied or was a redelivery, 400 when the callback did not verify or was not a checkout
+  event, and 404 when it named a transaction the ledger never opened, which asks the gateway to
+  retry and is what resolves a race against the sale that records it.
+
+  **`createCheckout()` deliberately does not ship.** What is sold, at what price, with which
+  success and cancel URLs is product behaviour, and §5.2 forbids inventing it. The README shows
+  the call; the application makes it.
+
+  **The endpoint carries no middleware, and each omission is load-bearing.** A gateway holds no
+  CSRF token and no session, so `Csrf` and `Authentication` would reject every genuine callback;
+  `Jsonify` would parse the body, and a signature is computed over the bytes as sent, so a body
+  decoded and re-encoded fails verification even when genuine. The controller's docblock says so
+  in full, because the missing CSRF is exactly what a future reader will try to "fix".
+
+  **`CHECKOUT_GATEWAY` distinguishes `paddle_checkout` from `paddle_subscription`** rather than
+  offering a single `paddle`. Paddle's `past_due` maps to Pending for a subscription and Failed
+  for a one-time payment (Clarity `ReleaseNotes_1.4.0.md` §2.6), so the name decides what a live
+  callback is taken to mean. An application selling both through one Paddle account needs two
+  adapters and must route deliveries by event type; that is an application decision, and the
+  config file says so rather than guessing.
+
+  `config/checkout.php` follows `config/llm.php` in centralising credentials rather than
+  `config/mail.php` in composing a service: there is no pool here to compose. It does construct
+  the one adapter the callback endpoint cannot work without, and exposes `credentials` so a
+  second adapter — an inline-priced subscription, whose billing cycle this file has no way to
+  know — can be built at the call site without re-reading the environment behind its back.
+
+  The four checkout tables still come from `php mitosis checkout:install`, not from `setup` or
+  `DDL.sql`. Payments are opt-in and the tables are not a setup-owned compatibility surface
+  (Clarity `CrossRepoContracts.md` §8), so this repository's §7 schema rules do not reach them.
+
+- **`.env_example` gains the checkout block** — `CHECKOUT_GATEWAY`, the Stripe and Paddle
+  credential pairs, and Paddle's base URI, checkout-page, tax-category and catalogue-price keys.
+
 ### Changed
 - **`config/mail.php` now builds a real mailer.** It previously defined a `MAILER` constant
   (`provider`/`api_key`/`sender_*`) that nothing read — Clarity had no Mail service when it was

@@ -189,6 +189,72 @@ Three things worth knowing before you rely on a pool:
 Check `$sent->failedOver()` and log `$sent->attempts` if you pool: Clarity keeps no delivery
 table, so that return value is the only record a mailer is failing.
 
+## Taking payments
+
+`Monad\Clarity\Services\Checkout` (Clarity 1.2.0+) puts Stripe and Paddle behind one contract:
+begin a checkout, re-query it, verify a callback, refund it. Changing gateway is a change to
+`.env` and a `checkout:install` you have probably already run.
+
+Two commands before the first payment — the tables are opt-in, so an application that takes no
+payments never carries them:
+
+```bash
+php mitosis checkout:install    # once per database context; re-runnable, and that is the upgrade path
+```
+
+`config/checkout.php` reads the credentials and builds the adapter for the one gateway named in
+`CHECKOUT_GATEWAY`:
+
+```dotenv
+CHECKOUT_GATEWAY=stripe_checkout      # or paddle_checkout, or paddle_subscription
+STRIPE_SECRET_KEY=sk_live_...
+STRIPE_WEBHOOK_SECRET=whsec_...       # from Stripe > Webhooks, issued per endpoint
+```
+
+**The two Paddle names are not interchangeable.** Paddle's `past_due` means Pending for a
+subscription and Failed for a one-time payment (Clarity `ReleaseNotes_1.4.0.md` §2.6), so the
+name here decides what a live callback is taken to mean, not merely which object gets built.
+
+### The callback endpoint is shipped; the sale is not
+
+`POST /webhooks/checkout` (`app/routes/api.php`) is built and tested. Point Stripe > Webhooks or
+Paddle > Notifications at it and put the signing secret it issues into `.env`. It verifies the
+signature, applies the event to `TransactionLedger`, and answers **204** when it worked or was a
+redelivery, **400** when the callback did not verify or was not a checkout event, and **404**
+when it named a transaction this ledger never opened — which asks the gateway to retry, and is
+what resolves a race against the sale that records it.
+
+This half is shipped because it is identical in every application, and because without it a paid
+transaction sits at `Pending` in the ledger for ever: the redirect back from a checkout page
+tells you where the customer went, not what the bank did.
+
+The other half — `createCheckout()` — is not shipped, and that is deliberate. What is being sold,
+at what price, with which success and cancel URLs is your product, and a skeleton that guessed it
+would be guessing. Build it where the sale happens:
+
+```php
+use Monad\Clarity\Services\Checkout\{CheckoutRequest, Money, TransactionLedger};
+
+$checkout = require __DIR__ . '/../config/checkout.php';
+
+$sale = new CheckoutRequest(
+    reference: $order->id,
+    amount: new Money(2500, 'GBP'),
+    successUrl: 'https://example.com/paid',
+    cancelUrl: 'https://example.com/cancelled',
+);
+
+$session = $checkout['adapter']->createCheckout($sale);
+
+// Record it before redirecting: the callback can arrive before the customer comes back.
+(new TransactionLedger())->open($sale, $session);
+
+return Response::redirect($session->redirectUrl);
+```
+
+A signing secret is not optional. Clarity refuses to verify a callback without one rather than
+accepting it unverified, so the endpoint answers 400 for every delivery until it is set.
+
 ## Testing
 
 ```bash
