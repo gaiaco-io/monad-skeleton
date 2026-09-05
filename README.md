@@ -224,6 +224,13 @@ redelivery, **400** when the callback did not verify or was not a checkout event
 when it named a transaction this ledger never opened — which asks the gateway to retry, and is
 what resolves a race against the sale that records it.
 
+With `CHECKOUT_GATEWAY=paddle_subscription` it handles both families a Paddle notification
+destination delivers to that one URL, routed on the event type's prefix: `transaction.*` events
+go to `TransactionLedger`, and the `subscription.*` events describing the plan's life afterwards
+go to `SubscriptionLedger`. A subscription is born from a transaction (Clarity
+`ReleaseNotes_1.4.0.md` §2.3), so both streams arrive, and the endpoint also joins the two
+references when the paying transaction carries the subscription it created.
+
 This half is shipped because it is identical in every application, and because without it a paid
 transaction sits at `Pending` in the ledger for ever: the redirect back from a checkout page
 tells you where the customer went, not what the bank did.

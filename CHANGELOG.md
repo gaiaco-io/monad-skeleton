@@ -21,6 +21,15 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
   event, and 404 when it named a transaction the ledger never opened, which asks the gateway to
   retry and is what resolves a race against the sale that records it.
 
+  **Both Paddle event families are routed.** A notification destination delivers `transaction.*`
+  and `subscription.*` to the same URL, and they belong to different ledgers — a subscription is
+  born from a transaction (Clarity §2.3), so both streams arrive. With
+  `CHECKOUT_GATEWAY=paddle_subscription` the endpoint routes on the event type's prefix, as
+  Clarity's `parseSubscriptionCallback()` docblock prescribes, and joins the two references when
+  the paying transaction carries the subscription it created. Routing reads `event_type` from an
+  unverified body, which grants nothing: both parsers verify over the raw bytes as their first
+  act, so a forged body has only chosen which door refuses it.
+
   **`createCheckout()` deliberately does not ship.** What is sold, at what price, with which
   success and cancel URLs is product behaviour, and §5.2 forbids inventing it. The README shows
   the call; the application makes it.

@@ -33,11 +33,15 @@
  * (Clarity `ReleaseNotes_1.4.0.md` §2.6), so the adapter that parses a callback decides what
  * that callback is taken to mean. Naming the wrong one silently misreads a live payment state.
  *
- * An application selling one-time *and* recurring through one Paddle account therefore needs
- * two adapters and has to route each delivery to the right one by event type. That is a real
- * application decision with no single right answer, so this file does not pretend to make it:
- * it configures the gateway you name, and an application that outgrows one extends the
- * callback controller.
+ * Within `paddle_subscription` the callback endpoint already handles both families a Paddle
+ * notification destination delivers: `transaction.*` events go to `TransactionLedger` and
+ * `subscription.*` events to `SubscriptionLedger`, routed on the event type's prefix as Clarity
+ * prescribes. What one adapter still cannot do is sell one-time *and* recurring through the
+ * same account, because that is the `past_due` disagreement again — a `transaction.*` event
+ * read by `PaddleSubscription` is read as a subscription's, which is wrong for an outright
+ * sale. That application needs both adapters and a rule for which transaction belongs to
+ * which, and the rule depends on what it sells. This file configures the gateway you name;
+ * an application that outgrows one adapter extends the callback controller.
  *
  *
  * ## Subscriptions
