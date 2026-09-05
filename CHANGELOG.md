@@ -57,6 +57,23 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
   `DDL.sql`. Payments are opt-in and the tables are not a setup-owned compatibility surface
   (Clarity `CrossRepoContracts.md` §8), so this repository's §7 schema rules do not reach them.
 
+- **`create-project` now writes `.env` itself**, from `.env_example` and with a freshly
+  generated `APP_SECRET` — `scripts/setup-env.php`, wired to Composer's
+  `post-create-project-cmd` and the counterpart to `scripts/copy-assets.js` on the npm side.
+  Previously the README told the developer to `cp .env_example .env` by hand, so a new project's
+  environment was only as complete as that step.
+
+  **The secret is generated rather than left blank, and that is the reason this is a script
+  rather than a one-line `copy()` in composer.json.** A blank `APP_SECRET` raises nothing:
+  `App\Middlewares\Csrf` hands it to Clarity's `HMAC::sign()`, which signs perfectly happily
+  with an empty key. Copying the template alone would have moved a fresh project from "will not
+  run, no .env" to "runs, and issues CSRF and session tokens anyone can forge" — a failure
+  indistinguishable from success, which is the worst kind for a scaffold to ship.
+
+  It never overwrites an existing `.env`, writes the file `0600` because it holds credentials,
+  and never fails the installation: a scaffold that aborts leaves a half-installed project, so
+  it reports what did not happen and names the command to run by hand.
+
 - **`.env_example` gains the checkout block** — `CHECKOUT_GATEWAY`, the Stripe and Paddle
   credential pairs, and Paddle's base URI, checkout-page, tax-category and catalogue-price keys.
 

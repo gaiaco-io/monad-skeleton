@@ -22,11 +22,21 @@ repository's `CHANGELOG.md` is the authoritative record of its own.
 composer create-project monad/skeleton NewApp
 cd NewApp
 npm install            # builds public/assets/css + copies vendored JS — see below
-cp .env_example .env   # fill in APP_SECRET, DB_*, and anything else you need
+                       # then edit .env: DB_*, and MAIL_MAILERS / CHECKOUT_GATEWAY if you need them
 php mitosis setup      # creates the sessions/caches tables
 php mitosis migrate    # runs database/migrations/*
 php mitosis serve      # http://127.0.0.1:8000
 ```
+
+`create-project` writes `.env` for you, from `.env_example` and with a freshly generated
+`APP_SECRET` (`scripts/setup-env.php`, Composer's `post-create-project-cmd`). The secret is
+generated rather than left blank because a blank one does not fail: `App\Middlewares\Csrf`
+passes it to Clarity's `HMAC::sign()`, which signs happily with an empty key, so the
+application would boot and issue CSRF and session tokens that anyone can forge. Every other
+key arrives present and empty, documented in place.
+
+It never overwrites an existing `.env`, and never fails the installation — if it cannot write
+the file it says so and tells you to `cp .env_example .env` yourself.
 
 `npm install` is not optional for a working page. Its `postinstall` hook runs
 `npm run build:all`, which does two things nothing else does:
