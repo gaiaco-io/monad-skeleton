@@ -22,11 +22,21 @@ repository's `CHANGELOG.md` is the authoritative record of its own.
 composer create-project monad/skeleton NewApp
 cd NewApp
 npm install            # builds public/assets/css + copies vendored JS — see below
-cp .env_example .env   # fill in APP_SECRET, DB_*, and anything else you need
+                       # then edit .env: DB_*, and MAIL_MAILERS / CHECKOUT_GATEWAY if you need them
 php mitosis setup      # creates the sessions/caches tables
 php mitosis migrate    # runs database/migrations/*
 php mitosis serve      # http://127.0.0.1:8000
 ```
+
+`create-project` writes `.env` for you, from `.env_example` and with a freshly generated
+`APP_SECRET` (`scripts/setup-env.php`, Composer's `post-create-project-cmd`). The secret is
+generated rather than left blank because a blank one does not fail: `App\Middlewares\Csrf`
+passes it to Clarity's `HMAC::sign()`, which signs happily with an empty key, so the
+application would boot and issue CSRF and session tokens that anyone can forge. Every other
+key arrives present and empty, documented in place.
+
+It never overwrites an existing `.env`, and never fails the installation — if it cannot write
+the file it says so and tells you to `cp .env_example .env` yourself.
 
 `npm install` is not optional for a working page. Its `postinstall` hook runs
 `npm run build:all`, which does two things nothing else does:
@@ -188,6 +198,79 @@ Three things worth knowing before you rely on a pool:
 
 Check `$sent->failedOver()` and log `$sent->attempts` if you pool: Clarity keeps no delivery
 table, so that return value is the only record a mailer is failing.
+
+## Taking payments
+
+`Monad\Clarity\Services\Checkout` (Clarity 1.2.0+) puts Stripe and Paddle behind one contract:
+begin a checkout, re-query it, verify a callback, refund it. Changing gateway is a change to
+`.env` and a `checkout:install` you have probably already run.
+
+Two commands before the first payment — the tables are opt-in, so an application that takes no
+payments never carries them:
+
+```bash
+php mitosis checkout:install    # once per database context; re-runnable, and that is the upgrade path
+```
+
+`config/checkout.php` reads the credentials and builds the adapter for the one gateway named in
+`CHECKOUT_GATEWAY`:
+
+```dotenv
+CHECKOUT_GATEWAY=stripe_checkout      # or paddle_checkout, or paddle_subscription
+STRIPE_SECRET_KEY=sk_live_...
+STRIPE_WEBHOOK_SECRET=whsec_...       # from Stripe > Webhooks, issued per endpoint
+```
+
+**The two Paddle names are not interchangeable.** Paddle's `past_due` means Pending for a
+subscription and Failed for a one-time payment (Clarity `ReleaseNotes_1.4.0.md` §2.6), so the
+name here decides what a live callback is taken to mean, not merely which object gets built.
+
+### The callback endpoint is shipped; the sale is not
+
+`POST /webhooks/checkout` (`app/routes/api.php`) is built and tested. Point Stripe > Webhooks or
+Paddle > Notifications at it and put the signing secret it issues into `.env`. It verifies the
+signature, applies the event to `TransactionLedger`, and answers **204** when it worked or was a
+redelivery, **400** when the callback did not verify or was not a checkout event, and **404**
+when it named a transaction this ledger never opened — which asks the gateway to retry, and is
+what resolves a race against the sale that records it.
+
+With `CHECKOUT_GATEWAY=paddle_subscription` it handles both families a Paddle notification
+destination delivers to that one URL, routed on the event type's prefix: `transaction.*` events
+go to `TransactionLedger`, and the `subscription.*` events describing the plan's life afterwards
+go to `SubscriptionLedger`. A subscription is born from a transaction (Clarity
+`ReleaseNotes_1.4.0.md` §2.3), so both streams arrive, and the endpoint also joins the two
+references when the paying transaction carries the subscription it created.
+
+This half is shipped because it is identical in every application, and because without it a paid
+transaction sits at `Pending` in the ledger for ever: the redirect back from a checkout page
+tells you where the customer went, not what the bank did.
+
+The other half — `createCheckout()` — is not shipped, and that is deliberate. What is being sold,
+at what price, with which success and cancel URLs is your product, and a skeleton that guessed it
+would be guessing. Build it where the sale happens:
+
+```php
+use Monad\Clarity\Services\Checkout\{CheckoutRequest, Money, TransactionLedger};
+
+$checkout = require __DIR__ . '/../config/checkout.php';
+
+$sale = new CheckoutRequest(
+    reference: $order->id,
+    amount: new Money(2500, 'GBP'),
+    successUrl: 'https://example.com/paid',
+    cancelUrl: 'https://example.com/cancelled',
+);
+
+$session = $checkout['adapter']->createCheckout($sale);
+
+// Record it before redirecting: the callback can arrive before the customer comes back.
+(new TransactionLedger())->open($sale, $session);
+
+return Response::redirect($session->redirectUrl);
+```
+
+A signing secret is not optional. Clarity refuses to verify a callback without one rather than
+accepting it unverified, so the endpoint answers 400 for every delivery until it is set.
 
 ## Testing
 
