@@ -8,9 +8,17 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
 
 ### Documentation
 - **The `monad/clarity` version this skeleton resolves to is now `1.8.0`** (was `1.7.1`), and
-  `RepoMap.md`'s mirror picks up Clarity's `LLMAdapters\AnthropicStructuredOutput`. Clarity's
-  `ReleasePolicy.md` pre-tag items 8 and 9, done from this side because Clarity is canonical for
-  both documents. The constraint itself is unchanged at `^1.0`.
+  `RepoMap.md`'s mirror is re-synced. Clarity's `ReleasePolicy.md` pre-tag items 8 and 9, done
+  from this side because Clarity is canonical for both documents. The constraint itself is
+  unchanged at `^1.0`.
+
+  The mirror picks up two things: Clarity's `LLMAdapters\AnthropicStructuredOutput`, which was
+  the only byte-level drift, and **thirteen files that had never been in the tree at all** —
+  found by item 8's other clause, the one asking for a skim for staleness rather than a byte
+  comparison. Three whole directories were absent (`Services\LLM\`, `Services\Schema\`,
+  `Middlewares\Authentication\`), along with the `Services\Mail` facade, two PSR exception
+  classes and three `Console\` internals. Corrected canonically in Clarity (PR #18) and mirrored
+  here; the tree now matches `src/` in both directions, 123 files to 123 entries.
 
   Clarity 1.8.0 adds two optional constructor arguments to `LLMAdapters\Anthropic`
   (`structuredOutput`, `workspaceId`) and fixes `LLMAdapters\OpenAI`, which sent a parameter every
