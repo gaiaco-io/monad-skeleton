@@ -6,6 +6,26 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
 
 ## [Unreleased]
 
+### Documentation
+- **The `monad/clarity` version this skeleton resolves to is now `1.8.0`** (was `1.7.1`), and
+  `RepoMap.md`'s mirror picks up Clarity's `LLMAdapters\AnthropicStructuredOutput`. Clarity's
+  `ReleasePolicy.md` pre-tag items 8 and 9, done from this side because Clarity is canonical for
+  both documents. The constraint itself is unchanged at `^1.0`.
+
+  Clarity 1.8.0 adds two optional constructor arguments to `LLMAdapters\Anthropic`
+  (`structuredOutput`, `workspaceId`) and fixes `LLMAdapters\OpenAI`, which sent a parameter every
+  current OpenAI model rejects and so could reach only legacy ones. Nothing in this repository
+  calls the LLM service, so no application code changes.
+
+  **Verified against the published tag, not a path repository** (item 4): a fresh
+  `composer create-project monad/skeleton` resolved `monad/clarity v1.8.0` from Packagist, and
+  `setup`, `migrate`, `checkout:install` and `schedule:install` produced the expected nine tables
+  with `php mitosis health` green on SQLite. The MySQL half was **not** run — a server is
+  reachable on this machine but its credentials were not available, so that half of the check
+  1.7.1 recorded is outstanding. The dist archive was also confirmed to exclude `resources/`,
+  `CLAUDE.md`, `.gitattributes` and `.gitignore` — the first time item 5 has been checked against
+  a real published artifact rather than against the `.gitattributes` file alone.
+
 ## [1.2.0] - 2026-09-05
 
 Checkout, wired. Clarity has shipped `Services\Checkout` since its own 1.2.0, but nothing in
