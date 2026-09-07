@@ -20,6 +20,15 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
   classes and three `Console\` internals. Corrected canonically in Clarity (PR #18) and mirrored
   here; the tree now matches `src/` in both directions, 123 files to 123 entries.
 
+  **Synced a second time**, for `resources/smoke/live-llm-smoke.php` and
+  `ReleaseNotes_1.8.0.md`, which Clarity added to its own tree after the first sync. Two
+  corrections landing in Clarity on the same day left the mirror stale twice in a row, and the
+  second time was only caught because the comparison was finally made between what is on
+  `origin/main` in each repository, rather than between local working trees. A working copy can
+  be correct while the branch it came from is unmerged — which is exactly what had happened — so
+  item 8 is a statement about the published documents, and checking anything else does not test
+  it.
+
   Clarity 1.8.0 adds two optional constructor arguments to `LLMAdapters\Anthropic`
   (`structuredOutput`, `workspaceId`) and fixes `LLMAdapters\OpenAI`, which sent a parameter every
   current OpenAI model rejects and so could reach only legacy ones. Nothing in this repository
