@@ -7,6 +7,24 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
 ## [Unreleased]
 
 ### Documentation
+- **The `monad/clarity` version this skeleton resolves to is now `1.8.1`** (was `1.8.0`). A
+  patch with one fix: `Services\Migration` no longer declares a fresh anonymous class every time
+  it loads a migration file, which made a process cycling `migrate` and `migrate:rollback` grow
+  without bound. A one-shot CLI command was never meaningfully affected, and nothing in this
+  repository changes. The constraint stays `^1.0`.
+
+  Clarity's `ReleasePolicy.md` pre-tag items 8 and 9, done from this side. **No mirror sync was
+  needed this time:** `RepoMap.md` and `CrossRepoContracts.md` are byte-identical between the two
+  repositories' `origin/main`, and the staleness skim holds — 1.8.1 adds no files, so `src/` is
+  still 123 files to 123 entries.
+
+  **Verified against the published tag, not a path repository** (item 4): a fresh
+  `composer create-project monad/skeleton` resolved `monad/clarity v1.8.1` from Packagist (dist
+  `cf6645a`), and `setup`, `migrate`, `checkout:install` and `schedule:install` produced the
+  expected nine tables with `php mitosis health` green on SQLite. The changed code path was then
+  driven for real — `migrate:rollback` and a second `migrate` both succeeded, and health stayed
+  green. The MySQL half was again **not** run; it remains outstanding, as it was for 1.8.0.
+
 - **The `monad/clarity` version this skeleton resolves to is now `1.8.0`** (was `1.7.1`), and
   `RepoMap.md`'s mirror is re-synced. Clarity's `ReleasePolicy.md` pre-tag items 8 and 9, done
   from this side because Clarity is canonical for both documents. The constraint itself is
