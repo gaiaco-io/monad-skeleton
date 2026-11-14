@@ -13,6 +13,27 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
   Workflow-only, so nothing reaches the Packagist dist.
 
 ### Documentation
+- **The `monad/clarity` version this skeleton resolves to is now `1.9.1`** (was `1.9.0`). A
+  patch that documents and pins a guarantee 1.9.0 already kept: `Gemini::generateImage()`
+  returns only the images the model generated, never the reference images a request sent. No
+  behaviour changes, nothing in this repository changes, and the constraint stays `^1.0`.
+
+  Clarity's `ReleasePolicy.md` pre-tag items 8 and 9, done from this side. **No mirror sync was
+  needed:** `RepoMap.md` and `CrossRepoContracts.md` are byte-identical between the two
+  repositories' `origin/main`, and 1.9.1 adds no files.
+
+  **Item 4, verified against the published `v1.9.1` tag.** Packagist's Composer metadata still
+  ends at `1.8.1`, so as for 1.8.2 and 1.9.0 the fresh `create-project` was pointed at the tag
+  through a GitHub VCS repository rather than a path repository. It locked
+  `monad/clarity v1.9.1` at `97651ef`. `setup`, `migrate`, `checkout:install` and
+  `schedule:install` produced the expected nine tables, and `php mitosis health` was green on
+  SQLite.
+
+  The guarantee 1.9.1 documents was then checked live, from the installed package's own
+  `vendor/`. An edit of a teacup image on `gemini-nano-banana-2.1` returned exactly one image,
+  and it was not the reference: Google sent only a `thought` and a `model_output` step, and the
+  image showed the requested change.
+
 - **The `monad/clarity` version this skeleton resolves to is now `1.9.0`** (was `1.8.2`), and
   `RepoMap.md`'s mirror is re-synced. 1.9.0 adds image generation for Google's Nano Banana
   models: `Gemini::generateImage()` and four value objects under `Services\LLM\`. It is purely
