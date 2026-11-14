@@ -6,6 +6,12 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
 
 ## [Unreleased]
 
+### Changed
+- **CI now tests PHP 8.4 and 8.5 as well as 8.2 and 8.3.** The supported floor is unchanged at
+  `>=8.2`. This only adds coverage of the versions the skeleton is now developed and deployed
+  on, and matches `monad/clarity`, whose CI gained the same two versions alongside 1.9.0.
+  Workflow-only, so nothing reaches the Packagist dist.
+
 ### Documentation
 - **The `monad/clarity` version this skeleton resolves to is now `1.9.0`** (was `1.8.2`), and
   `RepoMap.md`'s mirror is re-synced. 1.9.0 adds image generation for Google's Nano Banana
