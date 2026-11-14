@@ -13,6 +13,28 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
   Workflow-only, so nothing reaches the Packagist dist.
 
 ### Documentation
+- **The `monad/clarity` version this skeleton resolves to is now `1.10.0`** (was `1.9.1`).
+  1.10.0 adds image input to `complete()`: a user message may carry an `images` key, and all
+  four LLM adapters send the images in their provider's format. It is purely additive. A
+  request without images is byte-for-byte unchanged, nothing in this repository changes, and
+  the constraint stays `^1.0`.
+
+  Clarity's `ReleasePolicy.md` pre-tag items 8 and 9, done from this side. **No mirror sync was
+  needed:** `RepoMap.md` and `CrossRepoContracts.md` are byte-identical between the two
+  repositories' `origin/main`, and 1.10.0 adds no files.
+
+  **Item 4, verified against the published `v1.10.0` tag.** Packagist's Composer metadata still
+  ends at `1.8.1`, so as for the three releases before it, the fresh `create-project` was
+  pointed at the tag through a GitHub VCS repository rather than a path repository. It locked
+  `monad/clarity v1.10.0` at `99c0ccd`. `setup`, `migrate`, `checkout:install` and
+  `schedule:install` produced the expected nine tables, and `php mitosis health` was green on
+  SQLite.
+
+  The new path was then driven for real, from the installed package's own `vendor/`, using the
+  checklist pattern Clarity's docs now show. Gemini was given a before and after image and a
+  schema built from `['teacup_color', 'saucer_color']`. It reported the teacup changed from
+  blue to red and the saucer unchanged, which matches the images.
+
 - **The `monad/clarity` version this skeleton resolves to is now `1.9.1`** (was `1.9.0`). A
   patch that documents and pins a guarantee 1.9.0 already kept: `Gemini::generateImage()`
   returns only the images the model generated, never the reference images a request sent. No
