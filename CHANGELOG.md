@@ -23,7 +23,13 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
   `cf6645a`), and `setup`, `migrate`, `checkout:install` and `schedule:install` produced the
   expected nine tables with `php mitosis health` green on SQLite. The changed code path was then
   driven for real — `migrate:rollback` and a second `migrate` both succeeded, and health stayed
-  green. The MySQL half was again **not** run; it remains outstanding, as it was for 1.8.0.
+  green.
+
+  **The MySQL half was then run too**, the first time since 1.7.1 recorded it: the same fresh
+  project against MySQL 9.1.0, in a throwaway `monad_health_181` database. The same four commands
+  produced the same nine tables, `php mitosis health` came back green, and `migrate:rollback`
+  followed by `migrate` succeeded with health still green. The database was dropped afterwards.
+  Item 4 is now fully verified on both backends for this release.
 
 - **The `monad/clarity` version this skeleton resolves to is now `1.8.0`** (was `1.7.1`), and
   `RepoMap.md`'s mirror is re-synced. Clarity's `ReleasePolicy.md` pre-tag items 8 and 9, done
@@ -57,9 +63,10 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
   `setup`, `migrate`, `checkout:install` and `schedule:install` produced the expected nine tables
   with `php mitosis health` green on SQLite. The MySQL half was **not** run — a server is
   reachable on this machine but its credentials were not available, so that half of the check
-  1.7.1 recorded is outstanding. The dist archive was also confirmed to exclude `resources/`,
-  `CLAUDE.md`, `.gitattributes` and `.gitignore` — the first time item 5 has been checked against
-  a real published artifact rather than against the `.gitattributes` file alone.
+  1.7.1 recorded is outstanding (since closed against 1.8.1 — see the entry above). The dist
+  archive was also confirmed to exclude `resources/`, `CLAUDE.md`, `.gitattributes` and
+  `.gitignore` — the first time item 5 has been checked against a real published artifact rather
+  than against the `.gitattributes` file alone.
 
 ## [1.2.0] - 2026-09-05
 
