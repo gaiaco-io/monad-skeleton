@@ -7,6 +7,31 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
 ## [Unreleased]
 
 ### Documentation
+- **The `monad/clarity` version this skeleton resolves to is now `1.9.0`** (was `1.8.2`), and
+  `RepoMap.md`'s mirror is re-synced. 1.9.0 adds image generation for Google's Nano Banana
+  models: `Gemini::generateImage()` and four value objects under `Services\LLM\`. It is purely
+  additive, nothing in this repository changes, and the constraint stays `^1.0`.
+
+  Clarity's `ReleasePolicy.md` pre-tag items 8 and 9, done from this side. **The mirror picks up
+  exactly 1.9.0's drift:** the four new files (`GeneratedImage`, `ImageRequest`,
+  `ImageResponse`, `ReferenceImage`) and annotations on `Gemini.php` and the live smoke
+  script. `RepoMap.md` is now byte-identical to Clarity's `origin/main`, and
+  `CrossRepoContracts.md` already was. The staleness skim holds: all 127 files under Clarity's
+  `src/` (was 123) have an entry.
+
+  **Item 4, verified against the published `v1.9.0` tag.** Packagist's Composer metadata was
+  still ending at `1.8.1` more than an hour after `1.8.2` was tagged. So, as for 1.8.2, the
+  fresh `create-project` was pointed at the tag through a GitHub VCS repository rather than a
+  path repository, and it locked `monad/clarity v1.9.0` at `dd35ff2`. `setup`, `migrate`,
+  `checkout:install` and `schedule:install` produced the expected nine tables, and
+  `php mitosis health` was green on SQLite.
+
+  The new code path was then driven for real, from the installed package's own `vendor/`:
+  `generateImage()` returned a 1024×1024 `image/jpeg` from `gemini-nano-banana-2.1`, with
+  `providerRequestId` null as documented, and `complete()` decoded a structured response
+  whose schema carries `additionalProperties` (1.8.2's fix, included in 1.9.0). The MySQL half
+  was not run, because 1.9.0 changes no database code.
+
 - **The `monad/clarity` version this skeleton resolves to is now `1.8.2`** (was `1.8.1`). A
   patch with one fix: `LLMAdapters\Gemini` sends a structured-output schema as
   `responseJsonSchema`, so a schema containing `additionalProperties`, which OpenAI's strict
