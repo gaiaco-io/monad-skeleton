@@ -7,6 +7,31 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
 ## [Unreleased]
 
 ### Documentation
+- **The `monad/clarity` version this skeleton resolves to is now `1.8.2`** (was `1.8.1`). A
+  patch with one fix: `LLMAdapters\Gemini` sends a structured-output schema as
+  `responseJsonSchema`, so a schema containing `additionalProperties`, which OpenAI's strict
+  mode requires, no longer gets HTTP 400 from Gemini. Nothing in this repository changes, and
+  the constraint stays `^1.0`.
+
+  Clarity's `ReleasePolicy.md` pre-tag items 8 and 9, done from this side. **No mirror sync was
+  needed:** `RepoMap.md` and `CrossRepoContracts.md` are byte-identical between the two
+  repositories' `origin/main`. 1.8.2 adds no files.
+
+  **Item 4, verified against the published `v1.8.2` tag.** Packagist's web page and package
+  API listed `v1.8.2` (dist `6ca5ed2`) within minutes of the tag, but its Composer metadata
+  (`repo.packagist.org/p2`) had not been regenerated more than twenty minutes later and still
+  ended at `1.8.1`. So a plain `create-project` resolved `1.8.1`. The fresh project was
+  therefore pointed at the tag through a VCS repository on GitHub, not a path repository, and
+  it locked `monad/clarity v1.8.2` at `6ca5ed2`, the same commit Packagist's dist names. `setup`,
+  `migrate`, `checkout:install` and `schedule:install` produced the expected nine tables, and
+  `php mitosis health` was green on SQLite.
+
+  The changed code path was then driven for real, from the installed package's own `vendor/`:
+  a Gemini structured-output call with `additionalProperties` returned a correctly decoded
+  object on `gemini-3.5-flash-lite`. The first attempt failed in transport while Google was
+  under load, and the retry succeeded. The MySQL half was not run, because 1.8.2 changes no
+  database code.
+
 - **The `monad/clarity` version this skeleton resolves to is now `1.8.1`** (was `1.8.0`). A
   patch with one fix: `Services\Migration` no longer declares a fresh anonymous class every time
   it loads a migration file, which made a process cycling `migrate` and `migrate:rollback` grow
