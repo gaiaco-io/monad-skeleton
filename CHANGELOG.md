@@ -13,6 +13,16 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
   Workflow-only, so nothing reaches the Packagist dist.
 
 ### Documentation
+- **The `monad/clarity` version this skeleton resolves to is now `1.11.0`** (was `1.10.0`).
+  1.11.0 adds `StripeSubscription`, recurring billing through Stripe, and `SpeaksStripe`, the
+  trait it shares with `StripeCheckout`. It is purely additive, nothing in this repository's
+  code changes, and the constraint stays `^1.0`.
+
+  Clarity's `ReleasePolicy.md` pre-tag items 8 and 9, done from this side. **`RepoMap.md` was
+  synced:** the Clarity copy gained `SpeaksStripe.php` and `StripeSubscription.php` under
+  `CheckoutAdapters/`, and the mirror now matches it byte for byte. `CrossRepoContracts.md` had
+  not drifted and is unchanged.
+
 - **The `monad/clarity` version this skeleton resolves to is now `1.10.0`** (was `1.9.1`).
   1.10.0 adds image input to `complete()`: a user message may carry an `images` key, and all
   four LLM adapters send the images in their provider's format. It is purely additive. A
