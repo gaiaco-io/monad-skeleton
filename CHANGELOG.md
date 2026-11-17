@@ -13,6 +13,17 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
   Workflow-only, so nothing reaches the Packagist dist.
 
 ### Documentation
+- **The `monad/clarity` version this skeleton resolves to is now `1.12.0`** (was `1.11.1`).
+  1.12.0 adds `Checkout\IdempotencyKeyReusedException`. Stripe's refusal of a reused
+  idempotency key is now typed, and thrown from every Stripe call that sends a key. It is a
+  subclass of `CheckoutException`, so existing catches still catch it. Nothing in this
+  repository's code changes, and the constraint stays `^1.0`.
+
+  Clarity's `ReleasePolicy.md` items 8 and 9, done from this side. **`RepoMap.md` was synced:**
+  the Clarity copy gained `IdempotencyKeyReusedException.php` under `Checkout/`, and the mirror
+  now matches Clarity's `v1.12.0` copy byte for byte. `CrossRepoContracts.md` had not drifted
+  and is unchanged.
+
 - **The `monad/clarity` version this skeleton resolves to is now `1.11.1`** (was `1.11.0`).
   1.11.1 is a patch:
   - a signed but malformed webhook to `StripeCheckout` is refused as a `CheckoutException`
