@@ -13,6 +13,17 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
   Workflow-only, so nothing reaches the Packagist dist.
 
 ### Documentation
+- **The `monad/clarity` version this skeleton resolves to is now `1.11.1`** (was `1.11.0`).
+  1.11.1 is a patch:
+  - a signed but malformed webhook to `StripeCheckout` is refused as a `CheckoutException`
+    instead of leaking a PHP error;
+  - `PaddleSubscription` refuses a recurring amount too large to represent instead of
+    misreporting it.
+
+  Nothing in this repository's code changes, and the constraint stays `^1.0`. Clarity's
+  `ReleasePolicy.md` items 8 and 9, done from this side: `RepoMap.md` and
+  `CrossRepoContracts.md` are byte-identical to Clarity's `v1.11.1` copies, so neither changed.
+
 - **The `monad/clarity` version this skeleton resolves to is now `1.11.0`** (was `1.10.0`).
   1.11.0 adds `StripeSubscription`, recurring billing through Stripe, and `SpeaksStripe`, the
   trait it shares with `StripeCheckout`. It is purely additive, nothing in this repository's
