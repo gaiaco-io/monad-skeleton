@@ -13,6 +13,15 @@ All notable changes to `monad/skeleton` are documented in this file. Format foll
   Workflow-only, so nothing reaches the Packagist dist.
 
 ### Documentation
+- **The `monad/clarity` version this skeleton resolves to is now `1.12.2`** (was `1.12.1`).
+  1.12.2 is a patch: `Gemini::complete()` sends its API key in an `x-goog-api-key` header
+  instead of a `?key=` query parameter, so the key no longer reaches access logs or anything
+  that prints a request URI. Nothing in this repository's code changes, and the constraint
+  stays `^1.0`.
+
+  Clarity's `ReleasePolicy.md` items 8 and 9, done from this side: `RepoMap.md` and
+  `CrossRepoContracts.md` are byte-identical to Clarity's `v1.12.2` copies, so neither changed.
+
 - **The `monad/clarity` version this skeleton resolves to is now `1.12.1`** (was `1.12.0`).
   1.12.1 is a patch: malformed or oversized gateway data produces a `CheckoutException`
   everywhere in the Checkout adapters, never a PHP error or a wrong figure. Both Paddle webhook
